@@ -3,6 +3,7 @@ import glob
 import os
 import keras
 from PIL import image
+from sklearn.model_selection import train_test_split
 
 def getListOfImagePaths(dirPath):
     imagePaths = glob.glob('data/png/*/img/*')
@@ -78,12 +79,35 @@ class DataGenerator:
         self.allImages = getImages(self.imagePaths, dim)
         self.allMasks = getMasks(self.maskPaths, dim)
         self.batchSize = batchSize
-        self.numBatches = np.ceil(len(self.imagePaths)/self.batchSize)
+        self.currentBatchNum = 0
+        X = self.allImages
+        Y = np.empty(len(self.maskPaths))
+        for maskInd in range(0, len(self.maskPaths)):
+            Y[maskInd] = 1 if np.any(self.allMasks[:,:,maskInd]) else 0
+        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size = 0.25)
+        self.remainingIndices = np.random.shuffle(np.arange(self.Y_train.size))
+        self.numBatches = np.ceil(self.Y_train.size/self.batchSize)
     
     # i is the ith batch, starting at 0
-    def generateBatch(i):
-        index1 = i*self.batchSize
-        index2 = np.minimum(index1+self.batchSize, len(self.imagePaths))
-        batchImages = self.allImages[:,:,index1:index2]
-        batchMasks = self.allMasks[:,:,index1:index2]
-        return batchImages, batchMasks
+    def generateBatchForClassification():
+        lastInd = np.minimum(self.remainingIndices.size, self.batchSize)
+        indices = self.remainingIndices[0:lastInd]
+        batchX = self.X_train[:,:,indices]
+        batchY = self.Y_train[indices]
+        self.currentBatchNum=self.currentBatchNum+1
+        self.remainingIndices = np.delete(self.remainingIndices, indices)
+        if self.remainingIndices.size == 0:
+            self.on_epoch_end()
+        return batchX, batchY
+    
+    def on_epoch_end():
+        self.remainingIndices = np.random.shuffle(np.arange(self.Y_train.size))
+    
+    def getNumBatches():
+        return self.numBatches
+
+    def getTrainDataForClassification():
+        return self.X_train, self.Y_train
+    
+    def getTestDataForClassification():
+        return self.X_test, self.Y_test
