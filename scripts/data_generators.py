@@ -3,6 +3,7 @@ import glob
 import os
 import keras
 from PIL import image
+from keras.applications.densenet import DenseNet121
 from sklearn.model_selection import train_test_split
 
 def getListOfImagePaths(dirPath):
@@ -107,7 +108,21 @@ class DataGenerator:
         return self.numBatches
 
     def getTrainDataForClassification():
-        return self.X_train, self.Y_train
+        old_shape = self.X_train.shape
+        new_shape = (old_shape[0], old_shape[1], 3, old_shape[2])
+        new_X_train = np.empty(new_shape)
+        for i in range(0, old_shape[2]):
+            new_X_train[:,:,0,i] = self.X_train[:,:,i]
+            new_X_train[:,:,1,i] = self.X_train[:,:,i]
+            new_X_train[:,:,2,i] = self.X_train[:,:,i]
+        return new_X_train, self.Y_train
     
     def getTestDataForClassification():
-        return self.X_test, self.Y_test
+        old_shape = self.X_test.shape
+        new_shape = (old_shape[0], old_shape[1], 3, old_shape[2])
+        new_X_test = np.empty(new_shape)
+        for i in range(0, old_shape[2]):
+            new_X_test[:,:,0,i] = self.X_test[:,:,i]
+            new_X_test[:,:,1,i] = self.X_test[:,:,i]
+            new_X_test[:,:,2,i] = self.X_test[:,:,i]
+        return new_X_test, self.Y_test
