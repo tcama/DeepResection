@@ -25,7 +25,9 @@ X_train, Y_train = dg.getTrainDataForClassification()
 X_test, Y_test = dg.getTestDataForClassification()
 
 model_detect_resection.fit(X_train, Y_train, batch_size=batch_size, epochs=num_epochs)
-score=model.evaluate(X_test, Y_test, batch_size=batch_size)
+score=model_detect_resection.evaluate(X_test, Y_test, batch_size=batch_size)
 
-print('score:')
+print('metrics: ')
+print(model_detect_resection.metrics_names)
+print('scores:')
 print(score)
