@@ -28,15 +28,15 @@ def getImages(imagePaths, dim):
                 toBeRemoved = img_arr.shape[0]-dim[0]
                 toBeRemoved1 = int(np.ceil(toBeRemoved/2))
                 toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1+1
-                index2 = img_arr.shape[0]-toBeRemoved2+1
+                index1 = toBeRemoved1
+                index2 = img_arr.shape[1]-toBeRemoved2
                 img_arr = img_arr[index1:index2,:]
             if(img_arr.shape[1] != dim[1]):
                 toBeRemoved = img_arr.shape[1]-dim[1]
                 toBeRemoved1 = int(np.ceil(toBeRemoved/2))
                 toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1+1
-                index2 = img_arr.shape[1]-toBeRemoved2+1
+                index1 = toBeRemoved1
+                index2 = img_arr.shape[1]-toBeRemoved2
                 img_arr = img_arr[:,index1:index2]
         #add image to returned array
         ret[:,:,index] = img_arr
@@ -44,10 +44,10 @@ def getImages(imagePaths, dim):
     return ret
 
 # dim is a tuple: (192, 192)
-def getMasks(imagePaths, dim):
+def getMasks(maskPaths, dim):
     ret = np.empty((dim, len(imagePaths)))
     index = 0
-    for path in imagePaths:
+    for path in maskPaths:
         img = Image.open(path)
         img_arr = np.asarray(img)
         #crop image
@@ -56,15 +56,15 @@ def getMasks(imagePaths, dim):
                 toBeRemoved = img_arr.shape[0]-dim[0]
                 toBeRemoved1 = int(np.ceil(toBeRemoved/2))
                 toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1+1
-                index2 = img_arr.shape[0]-toBeRemoved2+1
+                index1 = toBeRemoved1
+                index2 = img_arr.shape[1]-toBeRemoved2
                 img_arr = img_arr[index1:index2,:]
             if(img_arr.shape[1] != dim[1]):
                 toBeRemoved = img_arr.shape[1]-dim[1]
                 toBeRemoved1 = int(np.ceil(toBeRemoved/2))
                 toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1+1
-                index2 = img_arr.shape[1]-toBeRemoved2+1
+                index1 = toBeRemoved1
+                index2 = img_arr.shape[1]-toBeRemoved2
                 img_arr = img_arr[:,index1:index2]
         #add image to returned array
         ret[:,:,index] = img_arr
