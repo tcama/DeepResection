@@ -32,9 +32,15 @@ def generate_classification_model(dim=(192, 192)):
     #model.add(Dense(2, activation='softmax'))
 
     # use pre-trained weights on ImageNet
-    model = DenseNet121(include_top=False, weights='imagenet', input_shape=(192,192, 3), pooling=max, classes=2)  
+    model = DenseNet121(include_top=False, weights='imagenet', input_shape=(192,192,3), pooling=max)
+
+    # add sigmoid activation layer
+    top_model = GlobalAveragePooling2D(input_shape=(192,192,3)) (model.layers[-1].output)
+    top_model2 = Dense(1, activation='sigmoid') (top_model)
+
+    new_model = Model(inputs=model.input, outputs=top_model2)
 
     #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     adm = Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
-    model.compile(loss='categorical_crossentropy', optimizer=adm, metrics=['accuracy'])
-    return model
+    new_model.compile(loss='binary_crossentropy', optimizer=adm, metrics=['binary_accuracy'])
+    return new_model
