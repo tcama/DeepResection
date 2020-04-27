@@ -10,9 +10,8 @@ def getListOfImagePaths(dirPath):
     ret = [os.path.join(dirPath, os.path.normpath(path)) for path in imagePaths]
     return ret
 
-def getListOfMaskPaths(dirPath):
-    maskPaths = glob.glob('data/png/*/mask/*')
-    ret = [os.path.join(dirPath, os.path.normpath(path)) for path in maskPaths]
+def getListOfMaskPaths(imagePaths):
+    ret = [p.replace('img/', 'mask/') for p in imagePaths]
     return ret
 
 # dim is a tuple: (192, 192)
@@ -75,18 +74,17 @@ class DataGenerator:
     def __init__(self, dirPath, batchSize=32, dim=(192, 192)):
         self.dim = dim
         self.imagePaths = getListOfImagePaths(dirPath)
-        self.maskPaths = getListOfMaskPaths(dirPath)
+        self.maskPaths = getListOfMaskPaths(self.imagePaths)
         self.allImages = getImages(self.imagePaths, dim)
         self.allMasks = getMasks(self.maskPaths, dim)
         self.batchSize = batchSize
         self.currentBatchNum = 0
-        X = self.allImages
-        Y = np.empty(len(self.maskPaths))
+        self.X = self.allImages
+        self.Y = np.empty(len(self.maskPaths))
         for maskInd in range(0, len(self.maskPaths)):
-            Y[maskInd] = 1 if np.any(self.allMasks[maskInd,:,:]) else 0
-        print(X.shape)
-        print(Y.shape)
-        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size = 0.25)
+            self.Y[maskInd] = 1 if np.any(self.allMasks[maskInd,:,:]) else 0
+        indices = np.arange(len(self.maskPaths))
+        self.X_train, self.X_test, self.Y_train, self.Y_test, self.ind_train, self.ind_test = train_test_split(self.X, self.Y, indices, test_size = 0.25)
         self.remainingIndices = np.random.shuffle(np.arange(self.Y_train.size))
         self.numBatches = np.ceil(self.Y_train.size/self.batchSize)
     
@@ -127,3 +125,15 @@ class DataGenerator:
             new_X_test[i,:,:,1] = self.X_test[i,:,:]
             new_X_test[i,:,:,2] = self.X_test[i,:,:]
         return new_X_test, self.Y_test
+
+    def getImagePaths(self):
+        return self.imagePaths
+    
+    def getMaskPaths(self):
+        return self.maskPaths
+
+    def getXY(self):
+        return self.X, self.Y
+    
+    def getIndicesTestTrain(self):
+        return self.ind_train, self.ind_test

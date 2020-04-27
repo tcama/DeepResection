@@ -10,33 +10,19 @@ from keras.applications.densenet import DenseNet121
 from PIL import image
 
 def generate_classification_model(dim=(192, 192)):
-    #model = Sequential()
-    #model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(MaxPooling2D(poolsize=(2,2)))
-    #model.add(Dropout=0.25)
+    def generate_classification_model():
 
-    #model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(MaxPooling2D(poolsize=(2,2)))
-    #model.add(Dropout=0.25)
-
-    #model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(dim[0], dim[1], 1)))
-    #model.add(MaxPooling2D(poolsize=(2,2)))
-    #model.add(Dropout=0.25)
-
-    #model.add(Flatten())
-    #model.add(Dense(256, activation='relu'))
-    #model.add(Dropout=0.25)
-    #model.add(Dense(2, activation='softmax'))
-
-    # use pre-trained weights on ImageNet
+    # use pre-trained weights on ImageNet as starting weights
     model = DenseNet121(include_top=False, weights='imagenet', input_shape=(192,192,3), pooling=max)
 
     # add sigmoid activation layer
     top_model = GlobalAveragePooling2D(input_shape=(192,192,3)) (model.layers[-1].output)
     top_model2 = Dense(1, activation='sigmoid') (top_model)
+    #model.add(layers.GlobalAveragePooling2D(input_shape=(192,192,3)))
+    #model.add(layers.Dense(1, activation='sigmoid'))
+    #model.summary()
+
+    #model.layers.pop()
 
     new_model = Model(inputs=model.input, outputs=top_model2)
 
