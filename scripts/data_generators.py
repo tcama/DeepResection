@@ -15,125 +15,150 @@ def getListOfMaskPaths(imagePaths):
     return ret
 
 # dim is a tuple: (192, 192)
-def getImages(imagePaths, dim):
-    ret = np.empty((len(imagePaths), dim[0], dim[1]))
+def getImagesForClassification(imagePaths, dim=(192, 192)):
+    ret = np.empty((len(imagePaths), dim[0], dim[1], 3))
     index = 0
     for path in imagePaths:
         img = Image.open(path)
         img_arr = np.asarray(img)
         #crop image
-        if(img_arr.shape != dim):
-            if(img_arr.shape[0] != dim[0]):
-                toBeRemoved = img_arr.shape[0]-dim[0]
-                toBeRemoved1 = int(np.ceil(toBeRemoved/2))
-                toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1
-                index2 = img_arr.shape[1]-toBeRemoved2
-                img_arr = img_arr[index1:index2,:]
-            if(img_arr.shape[1] != dim[1]):
-                toBeRemoved = img_arr.shape[1]-dim[1]
-                toBeRemoved1 = int(np.ceil(toBeRemoved/2))
-                toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1
-                index2 = img_arr.shape[1]-toBeRemoved2
-                img_arr = img_arr[:,index1:index2]
+        if(img_arr.shape[0] != dim[0]):
+            toBeRemoved = img_arr.shape[0]-dim[0]
+            toBeRemoved1 = int(np.ceil(toBeRemoved/2))
+            toBeRemoved2 = int(np.floor(toBeRemoved/2))
+            index1 = toBeRemoved1
+            index2 = img_arr.shape[0]-toBeRemoved2
+            img_arr = img_arr[index1:index2,:]
+        if(img_arr.shape[1] != dim[1]):
+            toBeRemoved = img_arr.shape[1]-dim[1]
+            toBeRemoved1 = int(np.ceil(toBeRemoved/2))
+            toBeRemoved2 = int(np.floor(toBeRemoved/2))
+            index1 = toBeRemoved1
+            index2 = img_arr.shape[1]-toBeRemoved2
+            img_arr = img_arr[:,index1:index2]
         #add image to returned array
-        ret[index,:,:] = img_arr
+        ret[index,:,:,0] = img_arr
+        ret[index,:,:,1] = img_arr
+        ret[index,:,:,2] = img_arr
         index=index+1
     return ret
 
-# dim is a tuple: (192, 192)
-def getMasks(maskPaths, dim):
-    ret = np.empty((len(maskPaths), dim[0], dim[1]))
+# returns numpy vector where each entry is 0 or 1 based on whether the image contains resected tissue
+def getClassificationY(maskPaths):
+    num_masks = len(maskPaths)
+    Y = np.zeros(num_masks)
     index = 0
-    for path in maskPaths:
+    for path in imagePaths:
         img = Image.open(path)
         img_arr = np.asarray(img)
         #crop image
-        if(img_arr.shape != dim):
-            if(img_arr.shape[0] != dim[0]):
-                toBeRemoved = img_arr.shape[0]-dim[0]
-                toBeRemoved1 = int(np.ceil(toBeRemoved/2))
-                toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1
-                index2 = img_arr.shape[1]-toBeRemoved2
-                img_arr = img_arr[index1:index2,:]
-            if(img_arr.shape[1] != dim[1]):
-                toBeRemoved = img_arr.shape[1]-dim[1]
-                toBeRemoved1 = int(np.ceil(toBeRemoved/2))
-                toBeRemoved2 = int(np.floor(toBeRemoved/2))
-                index1 = toBeRemoved1
-                index2 = img_arr.shape[1]-toBeRemoved2
-                img_arr = img_arr[:,index1:index2]
+        if(img_arr.shape[0] != dim[0]):
+            toBeRemoved = img_arr.shape[0]-dim[0]
+            toBeRemoved1 = int(np.ceil(toBeRemoved/2))
+            toBeRemoved2 = int(np.floor(toBeRemoved/2))
+            index1 = toBeRemoved1
+            index2 = img_arr.shape[0]-toBeRemoved2
+            img_arr = img_arr[index1:index2,:]
+        if(img_arr.shape[1] != dim[1]):
+            toBeRemoved = img_arr.shape[1]-dim[1]
+            toBeRemoved1 = int(np.ceil(toBeRemoved/2))
+            toBeRemoved2 = int(np.floor(toBeRemoved/2))
+            index1 = toBeRemoved1
+            index2 = img_arr.shape[1]-toBeRemoved2
+            img_arr = img_arr[:,index1:index2]
+        Y[index] = 1 if np.any(img_arr) else 0
+        index=index+1
+    return Y
+
+# dim is a tuple: (256, 256)
+def getImagesForSegmentation(imagePaths, dim=(256,256)):
+    ret = np.empty((len(imagePaths), dim[0], dim[1]))
+    index = 0
+    for path in imagePaths:
+        img = Image.open(path)
+        img_arr = np.asarray(img)
+        #pad image
+        if(img_arr.shape[0] != dim[0]):
+            toBeAdded = dim[0] - img_arr.shape[0]
+            toBeAdded1 = int(np.ceil(toBeAdded/2))
+            toBeAdded2 = int(np.floor(toBeAdded/2))
+            img_arr = np.pad(img_arr, ((toBeAdded1, toBeAdded2), (0, 0)))
+        if(img_arr.shape[1] != dim[1]):
+            toBeAdded = dim[1] - img_arr.shape[1]
+            toBeAdded1 = int(np.ceil(toBeAdded/2))
+            toBeAdded2 = int(np.floor(toBeAdded/2))
+            img_arr = np.pad(img_arr, ((0, 0), (toBeAdded1, toBeAdded2)))
         #add image to returned array
         ret[index,:,:] = img_arr
         index=index+1
     return ret
 
-class DataGenerator:
-    def __init__(self, dirPath, batchSize=32, dim=(192, 192)):
-        self.dim = dim
-        self.imagePaths = getListOfImagePaths(dirPath)
-        self.maskPaths = getListOfMaskPaths(self.imagePaths)
-        self.allImages = getImages(self.imagePaths, dim)
-        self.allMasks = getMasks(self.maskPaths, dim)
-        self.batchSize = batchSize
-        self.currentBatchNum = 0
-        self.X = self.allImages
-        self.Y = np.empty(len(self.maskPaths))
-        for maskInd in range(0, len(self.maskPaths)):
-            self.Y[maskInd] = 1 if np.any(self.allMasks[maskInd,:,:]) else 0
-        indices = np.arange(len(self.maskPaths))
-        self.X_train, self.X_test, self.Y_train, self.Y_test, self.ind_train, self.ind_test = train_test_split(self.X, self.Y, indices, test_size = 0.25)
-        self.remainingIndices = np.random.shuffle(np.arange(self.Y_train.size))
-        self.numBatches = np.ceil(self.Y_train.size/self.batchSize)
-    
-    # i is the ith batch, starting at 0
-    def generateBatchForClassification(self):
-        lastInd = np.minimum(self.remainingIndices.size, self.batchSize)
-        indices = self.remainingIndices[0:lastInd]
-        batchX = self.X_train[indices,:,:]
-        batchY = self.Y_train[indices]
-        self.currentBatchNum=self.currentBatchNum+1
-        self.remainingIndices = np.delete(self.remainingIndices, indices)
-        if self.remainingIndices.size == 0:
-            self.on_end()
-        return batchX, batchY
-    
-    def on_end(self):
-        self.remainingIndices = np.random.shuffle(np.arange(self.Y_train.size))
-    
-    def getNumBatches(self):
-        return self.numBatches
 
-    def getTrainDataForClassification(self):
-        old_shape = self.X_train.shape
-        new_shape = (old_shape[0], old_shape[1], old_shape[2], 3)
-        new_X_train = np.empty(new_shape)
-        for i in range(0, old_shape[0]):
-            new_X_train[i,:,:,0] = self.X_train[i,:,:]
-            new_X_train[i,:,:,1] = self.X_train[i,:,:]
-            new_X_train[i,:,:,2] = self.X_train[i,:,:]
-        return new_X_train, self.Y_train
-    
-    def getTestDataForClassification(self):
-        old_shape = self.X_test.shape
-        new_shape = (old_shape[0], old_shape[1], old_shape[2], 3)
-        new_X_test = np.empty(new_shape)
-        for i in range(0, old_shape[0]):
-            new_X_test[i,:,:,0] = self.X_test[i,:,:]
-            new_X_test[i,:,:,1] = self.X_test[i,:,:]
-            new_X_test[i,:,:,2] = self.X_test[i,:,:]
-        return new_X_test, self.Y_test
+dirPath = os.getcwd()
+imagePaths = getListOfImagePaths(dirPath)
+maskPaths = getListOfMaskPaths(imagePaths)
 
-    def getImagePaths(self):
-        return self.imagePaths
-    
-    def getMaskPaths(self):
-        return self.maskPaths
+# define the training, validation, and test patients
+imagePaths_valid = []
+for path in imagePaths:
+    if '14_w' in path or '23_r' in path or '27_m' in path or 'pat05' in path or 'pat11' in path or 'pat15' in path or 'pat20' in path:
+        imagePaths_valid.append(path)
+maskPaths_valid = getListOfMaskPaths(imagePaths_valid)
+imagePaths_test = []
+for path in imagePaths:
+    if '24_c' in path or '40_f' in path or '42_m' in path or 'pat03' in path or 'pat06' in path or 'pat25' in path or 'pat30' in path:
+        imagePaths_test.append(path)
+maskPaths_test = getListOfMaskPaths(imagePaths_test)
+imagePaths_train = []
+for path in imagePaths:
+    if path not in imagePaths_valid and path not in imagePaths_test:
+        imagePaths_train.append(path)
+maskPaths_train = getListOfMaskPaths(imagePaths_train)
 
-    def getXY(self):
-        return self.X, self.Y
-    
-    def getIndicesTestTrain(self):
-        return self.ind_train, self.ind_test
+# get X and Y for each set, for the classification of images containing and not containing resected tissue
+X_train_class = getImagesForClassification(imagePaths_train)
+X_train_class = X_train_class/255
+X_valid_class = getImagesForClassification(imagePaths_valid)
+X_valid_class = X_valid_class/255
+X_test_class = getImagesForClassification(imagePaths_test)
+X_test_class = X_test_class/255
+Y_train_class = getClassificationY(maskPaths_train)
+Y_valid_class = getClassificationY(maskPaths_valid)
+Y_test_class = getClassificationY(maskPaths_test)
+
+# get X and Y for each set, for the segmentation of resected tissue in images
+X_train_seg = getImagesForSegmentation(imagePaths_train)
+X_train_seg = X_train_seg/255
+X_train_seg = X_train_seg[..., np.newaxis]
+X_valid_seg = getImagesForSegmentation(imagePaths_valid)
+X_valid_seg = X_valid_seg/255
+X_valid_seg = X_valid_seg[..., np.newaxis]
+X_test_seg = getImagesForSegmentation(imagePaths_test)
+X_test_seg = X_test_seg/255
+X_test_seg = X_test_seg[..., np.newaxis]
+Y_train_seg = getImagesForSegmentation(maskPaths_train)
+Y_train_seg = Y_train_seg/255
+Y_train_seg = (Y_train_seg > 0).astype(np.float32)
+Y_train_seg = Y_train_seg[..., np.newaxis]
+Y_valid_seg = getImagesForSegmentation(maskPaths_valid)
+Y_valid_seg = Y_valid_seg/255
+Y_valid_seg = (Y_valid_seg > 0).astype(np.float32)
+Y_valid_seg = Y_valid_seg[..., np.newaxis]
+Y_test_seg = getImagesForSegmentation(maskPaths_test)
+Y_test_seg = Y_test_seg/255
+Y_test_seg = (Y_test_seg > 0).astype(np.float32)
+Y_test_seg = Y_test_seg[..., np.newaxis]
+
+# save preprocessed dataset to npy files
+np.save('X_train_class.npy', X_train_class)
+np.save('Y_train_class.npy', Y_train_class)
+np.save('X_valid_class.npy', X_valid_class)
+np.save('Y_valid_class.npy', Y_valid_class)
+np.save('X_test_class.npy', X_test_class)
+np.save('Y_test_class.npy', Y_test_class)
+np.save('X_train_seg.npy', X_train_seg)
+np.save('Y_train_seg.npy', Y_train_seg)
+np.save('X_valid_seg.npy', X_valid_seg)
+np.save('Y_valid_seg.npy', Y_valid_seg)
+np.save('X_test_seg.npy', X_test_seg)
+np.save('Y_test_seg.npy', Y_test_seg)
