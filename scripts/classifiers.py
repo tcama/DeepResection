@@ -18,15 +18,9 @@ def generate_classification_model(dim=(192, 192)):
     # add sigmoid activation layer
     top_model = GlobalAveragePooling2D(input_shape=(192,192,3)) (model.layers[-1].output)
     top_model2 = Dense(1, activation='sigmoid') (top_model)
-    #model.add(layers.GlobalAveragePooling2D(input_shape=(192,192,3)))
-    #model.add(layers.Dense(1, activation='sigmoid'))
-    #model.summary()
-
-    #model.layers.pop()
 
     new_model = Model(inputs=model.input, outputs=top_model2)
 
-    #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     adm = Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
     new_model.compile(loss='binary_crossentropy', optimizer=adm, metrics=['binary_accuracy'])
     return new_model
