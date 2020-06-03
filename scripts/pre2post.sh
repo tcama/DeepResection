@@ -3,7 +3,7 @@
 # This code performs a non-diffeomorphic registration of the pre-operative image to the post-operative image. It also 
 # provides atlas segmentations based on the pre-operative image.
 #
-# Usage: pre2post.sh subID preop.nii.gz postop.nii.gz atlas_T1.nii.gz atlas_seg.nii.gz
+# Usage: pre2post.sh subID preop.nii.gz postop.nii.gz
 #
 # Thomas Campbell Arnold 
 # tcarnold@seas.upenn.edu
@@ -31,14 +31,14 @@ antsRegistration \
 --output ${OUT_DIR}pre2post_ \
 --interpolation Linear \
 --use-histogram-matching 0 \
---initial-moving-transform [${3},${2},1] \
+--initial-moving-transform [./data/${1}/${3},./data/${1}/${2},1] \
 --transform Rigid[0.1] \
---metric MI[${3},${2},1,32,Regular,0.25] \
+--metric MI[./data/${1}/${3},./data/${1}/${2},1,32,Regular,0.25] \
 --convergence [1000x500x250x100,1e-6,10] \
 --shrink-factors 8x4x2x1 \
 --smoothing-sigmas 3x2x1x0vox \
 --transform Affine[0.1] \
---metric MI[${3},${2},1,32,Regular,0.25] \
+--metric MI[./data/${1}/${3},./data/${1}/${2},1,32,Regular,0.25] \
 --convergence [1000x500x250x100,1e-6,10] \
 --shrink-factors 8x4x2x1 \
 --smoothing-sigmas 3x2x1x0vox
@@ -46,22 +46,21 @@ antsRegistration \
 # transform pre-operative T1 to post-operative T1 space
 antsApplyTransforms \
 -d 3 \
--i ${2} \
+-i ./data/${1}/${2} \
 -o ${OUT_DIR}pre2post_${2} \
 -t ${OUT_DIR}pre2post_0GenericAffine.mat \
--r ${3} \
+-r ./data/${1}/${3} \
 -n Linear
 
 ################### Register atlas to preop image ################### 
 
 mkdir ./analysis/${1}/atlas2pre/
-OUT_DIR=./analysis/${1}/atlas2pre/
 
 # Registration of atlas to preop
 antsRegistration \
 --dimensionality 3 \
 --float 0 \
---output ${OUT_DIR}atlas2pre_ \
+--output ./analysis/${1}/atlas2pre/atlas2pre_ \
 --interpolation Linear \
 --use-histogram-matching 0 \
 --initial-moving-transform [${OUT_DIR}pre2post_${2},${ATLAS_DIR}MNI_T1.nii,1] \
@@ -81,6 +80,9 @@ antsRegistration \
 --shrink-factors 8x4x2x1 \
 --smoothing-sigmas 3x2x1x0vox
 
+# change output directory
+OUT_DIR=./analysis/${1}/atlas2pre/
+
 # transform MNI-T1 to pre-operative T1 space
 antsApplyTransforms \
 -d 3 \
@@ -88,15 +90,15 @@ antsApplyTransforms \
 -o ${OUT_DIR}atlas2pre_MNI_T1.nii \
 -t ${OUT_DIR}atlas2pre_1Warp.nii.gz \
 -t ${OUT_DIR}atlas2pre_0GenericAffine.mat \
--r ${OUT_DIR}pre2post_${2} \
+-r ./analysis/${1}/pre2post/pre2post_${2} \
 -n Linear
 
 # transform MNI-segmentation to pre-operative T1 space
 antsApplyTransforms \
 -d 3 \
--i ${ATLAS_DIR}${3} \
--o ${OUT_DIR}atlas2pre_${3} \
+-i ${ATLAS_DIR}AAL116_origin_MNI_T1.nii \
+-o ${OUT_DIR}atlas2pre_AAL116_origin_MNI_T1.nii \
 -t ${OUT_DIR}atlas2pre_1Warp.nii.gz \
 -t ${OUT_DIR}atlas2pre_0GenericAffine.mat \
--r ${OUT_DIR}pre2post_${2} \
+-r ./analysis/${1}/pre2post/pre2post_${2} \
 -n NearestNeighbor
