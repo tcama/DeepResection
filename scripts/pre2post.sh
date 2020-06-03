@@ -54,13 +54,13 @@ antsApplyTransforms \
 
 ################### Register atlas to preop image ################### 
 
-mkdir ./analysis/${1}/atlas2pre/
+mkdir ./analysis/${1}/atlas2post/
 
 # Registration of atlas to preop
 antsRegistration \
 --dimensionality 3 \
 --float 0 \
---output ./analysis/${1}/atlas2pre/atlas2pre_ \
+--output ./analysis/${1}/atlas2post/atlas2post_ \
 --interpolation Linear \
 --use-histogram-matching 0 \
 --initial-moving-transform [${OUT_DIR}pre2post_${2},${ATLAS_DIR}MNI_T1.nii,1] \
@@ -81,15 +81,15 @@ antsRegistration \
 --smoothing-sigmas 3x2x1x0vox
 
 # change output directory
-OUT_DIR=./analysis/${1}/atlas2pre/
+OUT_DIR=./analysis/${1}/atlas2post/
 
 # transform MNI-T1 to pre-operative T1 space
 antsApplyTransforms \
 -d 3 \
 -i ${ATLAS_DIR}MNI_T1.nii \
--o ${OUT_DIR}atlas2pre_MNI_T1.nii \
--t ${OUT_DIR}atlas2pre_1Warp.nii.gz \
--t ${OUT_DIR}atlas2pre_0GenericAffine.mat \
+-o ${OUT_DIR}atlas2post_MNI_T1.nii \
+-t ${OUT_DIR}atlas2post_1Warp.nii.gz \
+-t ${OUT_DIR}atlas2post_0GenericAffine.mat \
 -r ./analysis/${1}/pre2post/pre2post_${2} \
 -n Linear
 
@@ -97,8 +97,8 @@ antsApplyTransforms \
 antsApplyTransforms \
 -d 3 \
 -i ${ATLAS_DIR}AAL116_origin_MNI_T1.nii \
--o ${OUT_DIR}atlas2pre_AAL116_origin_MNI_T1.nii \
--t ${OUT_DIR}atlas2pre_1Warp.nii.gz \
--t ${OUT_DIR}atlas2pre_0GenericAffine.mat \
+-o ${OUT_DIR}atlas2post_AAL116_origin_MNI_T1.nii \
+-t ${OUT_DIR}atlas2post_1Warp.nii.gz \
+-t ${OUT_DIR}atlas2post_0GenericAffine.mat \
 -r ./analysis/${1}/pre2post/pre2post_${2} \
 -n NearestNeighbor
