@@ -19,6 +19,7 @@ from keras.layers import Input, Conv2D
 from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
+import segmentation_models as sm
 warnings.filterwarnings("ignore")
 
 
@@ -66,11 +67,11 @@ MAX_IMG = np.max(postop_3D)
 # loop through all slices
 for slice in range(0, total_slices):
     if slice < 10:
-        output_file_name = PATIENT_NAME + '_img00' + str(slice) + '_postop.png'
+        output_file_name = 'temp_img00' + str(slice) + '_postop.png'
     elif slice < 100:
-        output_file_name = PATIENT_NAME + '_img0' + str(slice) + '_postop.png'
+        output_file_name = 'temp_img0' + str(slice) + '_postop.png'
     else:
-        output_file_name = PATIENT_NAME + '_img' + str(slice) + '_postop.png'
+        output_file_name = 'temp_img' + str(slice) + '_postop.png'
     
     # normalize the pixel values of the slice
     img = postop_3D[:,:,slice]/MAX_IMG
@@ -107,18 +108,9 @@ def dice_loss(y_true, y_pred):
 
 get_custom_objects().update({"dice": dice_loss})
 
-# build the model architecture
-BACKBONE = 'vgg16'
-
-base_model = sm.Unet(BACKBONE, encoder_weights='imagenet', classes=1, activation='sigmoid')
-inp = Input(shape=(256, 256, 1))
-l1 = Conv2D(3, (1, 1)) (inp)
-out = base_model(l1)
-model = Model(inp, out, name = base_model.name)
-model.compile(optimizer = Adam(lr = 1e-4), loss=dice_loss, metrics=[dice_coeff])
 
 # load the pre-trained neural network weights
-model.load_weights('../analysis/model_vgg16.h5')
+model = load_model('analysis/model_vgg16.h5', custom_objects={'dice_loss': dice_loss, 'dice_coeff': dice_coeff})
 
 # predict the resected tissue for each slice in the 3D input array
 preds = model.predict(input_arr, verbose = 1)
