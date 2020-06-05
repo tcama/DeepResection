@@ -3,7 +3,7 @@
 # Only run after installing the codebase: pip3 install segmentation_models
 
 # Usage: generate_mask.py postop.nii out_dir out_name
-# Example: generate_mask.py patient1_postop.nii ./patient1_info patient1_mask
+# Example: generate_mask.py patient1_postop.nii ./patient1_info patient1_mask.nii
 
 # 6/3/20 - created
 
@@ -118,7 +118,7 @@ model = Model(inp, out, name = base_model.name)
 model.compile(optimizer = Adam(lr = 1e-4), loss=dice_loss, metrics=[dice_coeff])
 
 # load the pre-trained neural network weights
-model.load_weights('./model_vgg16.h5')
+model.load_weights('../analysis/model_vgg16.h5')
 
 # predict the resected tissue for each slice in the 3D input array
 preds = model.predict(input_arr, verbose = 1)
@@ -134,5 +134,5 @@ for slice in range(0, total_slices):
 # convert the output array into a NIFTI file
 ni_mask = nib.Nifti1Image(output, postop.affine)
 OUTPUT_DIR = sys.argv[2]
-MASK_OUTPUT_FILE = OUTPUT_DIR + '/' + sys.argv[3] '.nii.gz'
+MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, sys.argv[3])
 nib.save(ni_mask, MASK_OUTPUT_FILE)
