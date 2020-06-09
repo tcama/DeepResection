@@ -4,7 +4,7 @@
 # Usage: calculate_resected_volumes.py mask.nii atlas.nii output_dir
 # Example: calculate_resected_volumes.py masks/patient1_mask.nii atlases/patient1_AAL116_origin_MNI_T1.nii results/patient1
 
-# 6/4/20 - created
+# 6/8/20 - created
 
 import sys
 import numpy as np
