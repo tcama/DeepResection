@@ -2,7 +2,7 @@
 # and prints percent volume resected for each ROI in the brain
 
 # Usage: resection_pipeline.sh patient_name preop.nii postop.nii output_dir
-# Example: ./scripts/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f
+# Example: ./pipeline/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f
 
 # 6/5/20 - created
 
