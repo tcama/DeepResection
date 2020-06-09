@@ -17,13 +17,22 @@ import json
 MASK_DIR = sys.argv[1]
 ATLAS_DIR = sys.argv[2]
 OUTPUT_DIR = sys.argv[3]
-OUTPUT_DIR = os.path.join(OUTPUT_DIR, "percent_resected.json")
+OUTPUT_DIR = os.path.join(OUTPUT_DIR, "resected_results.txt")
 
 mask = nib.load(MASK_DIR)
 mask_data = mask.get_fdata()
 
 atlas = nib.load(ATLAS_DIR)
 atlas_data = atlas.get_fdata()
+
+# get individual voxel dimensions and convert to centimeters
+header = mask.header
+voxel_dims = header.get_zooms()
+new_dims = (voxel_dims[0] / 10, voxel_dims[1] / 10, voxel_dims[2] / 10)
+
+# find the volume of resection in cubic centimeters
+mask_voxels = np.sum(mask_data)
+resection_volume = mask_voxels * new_dims[0] * new_dims[1] * new_dims[2]
 
 # define the mappings from atlas ROI pixel value to ROI name
 mappings = {2001: "Precentral gyrus left", 2002: "Precentral gyrus right", 2101: "Superior frontal gyrus, dorsolateral left",
@@ -72,21 +81,29 @@ roi_values = np.unique(combined)
 roi_values = list(roi_values)
 roi_values = roi_values[1:]
 
-# loop through each ROI, perform calculations, and add entry to results dictionary
-results = {}
+# initialize the list of results to be printed to the 
+results = []
+volume_str = "Total resection volume (cubic cm): " + str(resection_volume)
+results.append(volume_str)
 
+# loop through each ROI, perform calculations, and add entry to the list of results
 for roi in roi_values:
     name = mappings[int(roi)]
     total = np.sum(atlas_data == roi)
     resected = np.sum(combined == roi)
     percentage = (resected/total) * 100
     percentage = np.round(percentage, 3)
-    results[name] = percentage
+    percentage_remaining = 100 - percentage
+    result_str = name + ": " + str(percentage_remaining) + "% remaining"
+    results.append(result_str)
 
 # print and save results
-print('Percent volume resected, by region:')
-print()
-print(results)
 
-with open(OUTPUT_DIR, 'w') as fp:
-    json.dump(results, fp)
+print('Resection results, by region:')
+output_str = ""
+for result in results:
+    print(result)
+    output_str = output_str + result + "\n"
+
+with open(OUTPUT_DIR, 'w') as f:
+    f.write(output_str)

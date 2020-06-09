@@ -18,5 +18,5 @@ python3 ./scripts/generate_mask.py ${postop_file} ${4} ${mask_name}
 mask_file="${4}/${mask_name}"
 atlas_file="analysis/${1}/atlas2post/atlas2post_AAL116_origin_MNI_T1.nii"
 
-# generate a json file that calculates the percentages by brain region
+# generate a txt file that calculates the resection volume and percent remaining by brain region
 python3 ./scripts/calculate_resected_volumes.py ${mask_file} ${atlas_file} ${4}
