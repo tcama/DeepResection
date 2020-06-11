@@ -2,8 +2,8 @@
 # For now I am using the U-Net with VGG16 backbone built using the segmentation_models codebase
 # Only run after installing the codebase: pip3 install segmentation_models
 
-# Usage: generate_mask.py postop.nii out_dir out_name
-# Example: generate_mask.py patient1_postop.nii ./patient1_info patient1_mask.nii
+# Usage: generate_mask.py postop.nii out_dir out_name is_continuous
+# Example: generate_mask.py patient1_postop.nii ./patient1_info patient1_mask.nii True
 
 # 6/3/20 - created
 
@@ -20,6 +20,7 @@ from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
 import segmentation_models as sm
+from skimage.measure import label
 warnings.filterwarnings("ignore")
 
 
@@ -122,6 +123,30 @@ realY = postop_3D.shape[1]
 output = np.zeros(postop_3D.shape)
 for slice in range(0, total_slices):
     output[:,:,slice] = adjust_sizes(preds[slice,:,:,0], dim = (realX, realY))
+
+# get each continuous object in the mask
+IS_CONTINUOUS = sys.argv[4]
+if IS_CONTINUOUS:
+    mask_data_int = output.astype(np.uint8)
+    labels =label(mask_data_int, connectivity = 2)
+    object_labels = list(np.unique(labels))
+    object_labels.remove(0)
+
+    # get the continuous object that has the largest volume
+    MAX_OBJ = 0
+    MAX_OBJ_VOL = 0
+    for obj_lab in object_labels:
+        vol = np.sum(labels == obj_lab)
+        if vol > MAX_OBJ_VOL:
+            MAX_OBJ_VOL = vol
+            MAX_OBJ = obj_lab
+
+    # remove every other object from the mask
+    if MAX_OBJ != 0:
+        object_labels.remove(MAX_OBJ)
+    for obj_lab in object_labels:
+        idx = (labels == obj_lab)
+        output[idx] = 0
 
 # convert the output array into a NIFTI file
 ni_mask = nib.Nifti1Image(output, postop.affine)
