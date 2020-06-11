@@ -10,7 +10,7 @@ from keras.applications.densenet import DenseNet121
 from PIL import image
 
 def generate_classification_model(dim=(192, 192)):
-    def generate_classification_model():
+    #def generate_classification_model():
 
     # use pre-trained weights on ImageNet as starting weights
     model = DenseNet121(include_top=False, weights='imagenet', input_shape=(192,192,3), pooling=max)
