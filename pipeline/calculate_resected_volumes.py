@@ -26,6 +26,15 @@ mask_data = mask.get_fdata()
 atlas = nib.load(ATLAS_DIR)
 atlas_data = atlas.get_fdata()
 
+# multiply the arrays to get ROIs of the regions contained in the resection zone
+combined = mask_data * atlas_data
+
+# get each ROI value in the result
+roi_values = np.unique(combined)
+
+roi_values = list(roi_values)
+roi_values = roi_values[1:]
+
 # get individual voxel dimensions and convert to centimeters
 header = mask.header
 voxel_dims = header.get_zooms()
@@ -50,15 +59,6 @@ for line in atlas_txt:
     entry.remove(str(k))
     v = max(entry, key = len)
     mappings[k] = v
-
-# multiply the arrays to get ROIs of the regions contained in the resection zone
-combined = mask_data * atlas_data
-
-# get each ROI value in the result
-roi_values = np.unique(combined)
-
-roi_values = list(roi_values)
-roi_values = roi_values[1:]
 
 # initialize the list of results to be printed to the 
 results = []
