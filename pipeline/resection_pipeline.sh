@@ -10,7 +10,7 @@
 patient_id=${1}
 preop_file=${2}
 postop_file=${3}
-#./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file}
+./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file}
 
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
@@ -18,7 +18,7 @@ mask_name="${patient_id}_predicted_mask.nii.gz"
 output_dir=${4}
 is_continuous=${5}
 postop_full_file="data/${patient_id}/${postop_file}"
-#python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous}
+python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
