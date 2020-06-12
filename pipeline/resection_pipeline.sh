@@ -18,7 +18,7 @@ mask_name="${patient_id}_predicted_mask.nii.gz"
 output_dir=${4}
 is_continuous=${5}
 postop_full_file="data/${patient_id}/${postop_file}"
-python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous}
+#python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
@@ -26,4 +26,4 @@ atlas_file="analysis/${patient_id}/atlas2post/atlas2post_AAL116_origin_MNI_T1.ni
 
 atlas_mappings="tools/atlases/AAL116.txt"
 
-python3 ./scripts/calculate_resected_volumes.py ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
+python3 ./scripts/calculate_resected_volumes.py ${postop_full_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
