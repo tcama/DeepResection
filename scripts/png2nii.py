@@ -6,12 +6,13 @@
 
 # Usage: png2nii.py input_dir output_dir output_name affine.nii
 
-# Example: nii2png.py data/png/25_f/img analysis/25_f 25_f_predicted_mask.nii data/25_f/25_f_postop.nii
+# Example: png2nii.py data/png/25_f/img analysis/25_f 25_f_predicted_mask.nii data/25_f/25_f_postop.nii
 
 import numpy as np
 import nibabel as nib
 import imageio
 import os
+import sys
 from natsort import natsorted
 
 # function that pads or crops an array (in numpy format) to a specified dimension
@@ -49,13 +50,14 @@ if(len(sys.argv) != 5):
 
 INPUT_DIR = sys.argv[1]
 OUTPUT_DIR = sys.argv[2]
-OUTPUT_NAME = sys.argv[1]
+OUTPUT_NAME = sys.argv[3]
 AFFINE_INP = sys.argv[4]
 
 affine_ni = nib.load(AFFINE_INP)
 affine_data = affine_ni.get_fdata()
 
 img_list = natsorted(os.listdir(INPUT_DIR))
+print(img_list)
 
 slices = len(img_list)
 if(slices != affine_data.shape[2]):
@@ -64,7 +66,7 @@ if(slices != affine_data.shape[2]):
 
 output = np.zeros(affine_data.shape)
 for img_idx in range(slices):
-    img_file = img_list[img_idx]
+    img_file = os.path.join(INPUT_DIR, img_list[img_idx])
     img_arr = np.asarray(imageio.imread(img_file))
     output[:,:,img_idx] = adjust_sizes(img_arr, dim = (output.shape[0], output.shape[1]))
 
