@@ -8,6 +8,8 @@
 
 # Example: png2nii.py data/png/25_f/img analysis/25_f 25_f_predicted_mask.nii data/25_f/25_f_postop.nii
 
+# 6/12/20 - created
+
 import numpy as np
 import nibabel as nib
 import imageio
