@@ -1,24 +1,34 @@
 # This code uses the given pre-operative and post-operative images and outputs the resection percentages by brain region as a json file
 # and prints percent volume resected for each ROI in the brain
 
-# Usage: resection_pipeline.sh patient_name preop.nii postop.nii output_dir is_continuous(boolean)
-# Example: ./scripts/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f true
+# Usage: resection_pipeline.sh patient_name preop.nii postop.nii output_dir
+# Example: ./scripts/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f
 
 # 6/11/20 - created
 
-# apply an atlas to pre-operative image, register atlas to post-operative image
+# define inputs and prompt user for the is_continuous input
 patient_id=${1}
 preop_file=${2}
 postop_file=${3}
+
+output_dir=${4}
+while true; do
+    read -p "Is the entire resection continuous? [y/n]" yn
+    case $yn in
+        [Yy]* ) is_continuous=true; break;;
+        [Nn]* ) is_continuous=false; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# apply an atlas to pre-operative image, register atlas to post-operative image
 ./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file}
 
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
 # generate a predicted mask NIFTI file for the post-operative image
-output_dir=${4}
-is_continuous=${5}
 postop_full_file="data/${patient_id}/${postop_file}"
-python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous}
+python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous^}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
