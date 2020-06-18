@@ -19,8 +19,10 @@ from keras.layers import Input, Conv2D
 from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
-import segmentation_models as sm
 from skimage.measure import label
+from radiomics.shape import RadiomicsShape
+from radiomics.featureextractor import RadiomicsFeatureExtractor
+from sklearn.cluster import KMeans
 warnings.filterwarnings("ignore")
 
 
@@ -111,7 +113,7 @@ get_custom_objects().update({"dice": dice_loss})
 
 
 # load the pre-trained neural network weights
-model = load_model('analysis/model_vgg16.h5', custom_objects={'dice_loss': dice_loss, 'dice_coeff': dice_coeff})
+model = load_model('analysis/model_inception.h5', custom_objects={'dice_loss': dice_loss, 'dice_coeff': dice_coeff})
 
 # predict the resected tissue for each slice in the 3D input array
 preds = model.predict(input_arr, verbose = 1)
@@ -153,3 +155,40 @@ ni_mask = nib.Nifti1Image(output, postop.affine)
 OUTPUT_DIR = sys.argv[2]
 MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, sys.argv[3])
 nib.save(ni_mask, MASK_OUTPUT_FILE)
+
+# remove any sections that significantly decrease the sphericity of the mask
+img_ext, mask_ext = RadiomicsFeatureExtractor.loadImage(POSTOP_FILE, MASK_OUTPUT_FILE)
+shape = RadiomicsShape(img_ext, mask_ext)
+sphericity_entire = shape.getSphericityFeatureValue()
+
+idx = np.where(output == 1)
+X = np.zeros((len(idx[0]), 3))
+X[:, 0] = idx[0]
+X[:, 1] = idx[1]
+X[:, 2] = idx[2]
+
+kmeans = KMeans(n_clusters = 8, random_state = 0).fit(X)
+labels = kmeans.labels_
+
+output_new = np.copy(output)
+
+threshold = 0.05
+for l in range(0, 8):
+    group_labels = np.where(labels == l)
+    group_idx = X[group_labels[0],:].astype(np.uint8)
+    mask_data_temp = np.copy(output)
+    mask_data_temp[group_idx[:,0], group_idx[:,1], group_idx[:,2]] = 0
+    ni_temp = nib.Nifti1Image(mask_data_temp, mask.affine)
+    TEMP_OUTPUT_FILE = "mask_temp_label_%d.nii.gz" % l
+    TEMP_OUTPUT_FILE_FULL = os.path.join(OUTPUT_DIR, TEMP_OUTPUT_FILE)
+    nib.save(ni_temp, TEMP_OUTPUT_FILE_FULL)
+    img_ext, mask_ext = RadiomicsFeatureExtractor.loadImage(POSTOP_FILE, TEMP_OUTPUT_FILE_FULL)
+    shape = RadiomicsShape(img_ext, mask_ext)
+    sphericity_current = shape.getSphericityFeatureValue()
+    os.remove(TEMP_OUTPUT_FILE_FULL)
+    if(sphericity_current > sphericity_entire + 0.05):
+        output_new[group_idx[:,0], group_idx[:,1], group_idx[:,2]] = 0
+
+# convert the output array into a NIFTI file
+ni_mask_new = nib.Nifti1Image(output_new, postop.affine)
+nib.save(ni_mask_new, MASK_OUTPUT_FILE)
