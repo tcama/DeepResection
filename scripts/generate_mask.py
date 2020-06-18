@@ -186,7 +186,7 @@ for l in range(0, 8):
     shape = RadiomicsShape(img_ext, mask_ext)
     sphericity_current = shape.getSphericityFeatureValue()
     os.remove(TEMP_OUTPUT_FILE_FULL)
-    if(sphericity_current > sphericity_entire + 0.05):
+    if(sphericity_current > sphericity_entire + threshold):
         output_new[group_idx[:,0], group_idx[:,1], group_idx[:,2]] = 0
 
 # convert the output array into a NIFTI file
