@@ -14,6 +14,7 @@ import os
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from vol_report import vol_report
 
 # define arguments and load data
 IMG_DIR = sys.argv[1]
@@ -148,7 +149,9 @@ plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=-0.5, h
 plt.tight_layout()
 
 FIG_DIR = os.path.join(sys.argv[5], "resection_views.png")
-fig.savefig(FIG_DIR)
+fig.savefig(FIG_DIR, transparent=True)
 
 with open(HTML_DIR, "a") as myfile:
     myfile.write( "\n <img src=\"" + "resection_views.png" + "\" align=\"top right\"/>" )
+
+vol_report(HTML_DIR, df, fig)
