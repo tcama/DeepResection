@@ -27,8 +27,7 @@ done
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
 # generate a predicted mask NIFTI file for the post-operative image
-postop_full_file="data/${patient_id}/${postop_file}"
-python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous^}
+python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${is_continuous}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
