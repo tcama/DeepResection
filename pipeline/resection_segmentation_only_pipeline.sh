@@ -11,7 +11,16 @@ patient_id=${1}
 preop_file=${2}
 postop_file=${3}
 output_dir=${4}
-is_continuous=${5}
+
+while true; do
+    read -p "Is the entire resection continuous? [y/n]" yn
+    case $yn in
+        [Yy]* ) is_continuous=true; break;;
+        [Nn]* ) is_continuous=false; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
 # generate a predicted mask NIFTI file for the post-operative image
