@@ -1,5 +1,5 @@
 # This code uses the trained deep learning model to generate a mask NIFTI file given the NIFTI file for the post-operative MRI
-# For now I am using the U-Net with VGG16 backbone built using the segmentation_models codebase
+# Uses the U-Net with EfficientNet B1 backbone built using the segmentation_models codebase
 # Only run after installing the codebase: pip3 install segmentation_models
 
 # Usage: generate_mask.py postop.nii out_dir out_name is_continuous
