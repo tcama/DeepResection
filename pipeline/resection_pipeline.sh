@@ -15,8 +15,8 @@ output_dir=${4}
 while true; do
     read -p "Is the entire resection continuous? [y/n]" yn
     case $yn in
-        [Yy]* ) is_continuous=true; break;;
-        [Nn]* ) is_continuous=false; break;;
+        [Yy]* ) is_continuous=1; break;;
+        [Nn]* ) is_continuous=0; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
