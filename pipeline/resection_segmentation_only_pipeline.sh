@@ -1,8 +1,8 @@
 # This code uses the given pre-operative and post-operative images and outputs 
 # a resection segmentation.
 
-# Usage: resection_pipeline.sh patient_name preop.nii postop.nii output_dir is_continuous(boolean)
-# Example: ./scripts/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f true
+# Usage: resection_pipeline.sh patient_name preop.nii postop.nii output_dir
+# Example: ./scripts/resection_pipeline.sh 25_f 25_f_preop.nii.gz 25_f_postop.nii.gz analysis/25_f
 
 # 6/11/20 - created
 
