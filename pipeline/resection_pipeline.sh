@@ -31,8 +31,8 @@ python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${i
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
-atlas_file="analysis/${patient_id}/atlas2post/atlas2post_AAL116_origin_MNI_T1.nii"
+atlas_file="tools/atlases/atlas2post_AAL116_origin_MNI_T1.nii"
 
 atlas_mappings="tools/atlases/AAL116.txt"
 
-python3 ./scripts/calculate_resected_volumes.py ${postop_full_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
+python3 ./scripts/calculate_resected_volumes.py ${postop_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
