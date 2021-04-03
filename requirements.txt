@@ -10,3 +10,4 @@ radiomics==0.1
 scikit_learn==0.23.1
 skimage==0.0
 tensorflow==2.2.0
+segmentation_models==1.0.1
