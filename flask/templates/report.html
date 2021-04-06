@@ -6,7 +6,8 @@
       var params = [];
       params["images"] = [ '/static/{{ post_op_path }}', '/static/{{ mask_path }}'];
       params["luts"] = [{"name": "Solid Blue", "data":[[0, 0, 0, 1], [1, 0, 0, 1]]}];
-      params["{{ mask_path }}"] = {lut: "Solid Blue", alpha: 0.5};
+      params["{{ mask_path }}"] = {lut: "Solid Blue", alpha: 0.7};
+      params["{{ post_op_path }}"] = {minPercent: 0, maxPercent: 0.25};
       params["kioskMode"] = true;
 
     </script>
