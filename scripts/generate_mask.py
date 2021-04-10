@@ -20,9 +20,7 @@ from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
 from skimage.measure import label
-from radiomics.shape import RadiomicsShape
-from radiomics.featureextractor import RadiomicsFeatureExtractor
-from sklearn.cluster import KMeans
+import segmentation_models as sm
 warnings.filterwarnings("ignore")
 
 
@@ -113,7 +111,16 @@ get_custom_objects().update({"dice": dice_loss})
 
 
 # load the pre-trained neural network weights
-model = load_model('analysis/model_inception.h5', custom_objects={'dice_loss': dice_loss, 'dice_coeff': dice_coeff})
+BACKBONE = 'efficientnetb1'
+
+base_model = sm.Unet(BACKBONE, encoder_weights=None, classes=1, activation='sigmoid')
+inp = Input(shape=(256, 256, 1))
+l1 = Conv2D(3, (1, 1)) (inp)
+out = base_model(l1)
+
+
+model = Model(inp, out, name = base_model.name)
+model.load_weights('model/model.h5')
 
 # predict the resected tissue for each slice in the 3D input array
 preds = model.predict(input_arr, verbose = 1)
