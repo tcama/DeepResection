@@ -7,9 +7,11 @@
       params["images"] = [ '/static/{{ post_op_path }}', '/static/{{ mask_path }}'];
       params["luts"] = [{"name": "Solid Blue", "data":[[0, 0, 0, 1], [1, 0, 0, 1]]}];
       params["{{ mask_path }}"] = {lut: "Solid Blue", alpha: 0.7};
-      params["{{ post_op_path }}"] = {minPercent: 0, maxPercent: 0.25};
+      params["{{ post_op_path }}"] = {minPercent: 0, maxPercent: 0.5};
+      params["showControls"] = true;
+      params["showControlBar"] = true;
       params["kioskMode"] = true;
-
+      params["radiological"] = true;
     </script>
 
     <div class="container-fluid">
@@ -34,7 +36,7 @@
           </button>
         </div>
         <div class="col text-center">
-          <form action="{{ url_for('report') }}" method="POST">
+          <form action="/static/report.pdf" method="GET">
             <button class="btn btn-primary" type="submit" style="background-color: #011F5B;">
               Save PDF
             </button>

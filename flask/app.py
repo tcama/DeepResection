@@ -1,27 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for
 import os, sys
 sys.path.insert(1, '../scripts')
 from calculate_resected_volumes import calc_resec_vol
-from generate_mask import gen_mask, dice_coeff, dice_loss, adjust_sizes
+from generate_mask import gen_mask
 from jinja2 import Template
 from flask import Markup
 import sqlite3
-
-from tensorflow.compat.v1.keras.models import Model, load_model
-import nibabel as nib
-import numpy as np
+import pdfkit
 import time
-import pickle
+import base64
 
 app = Flask(__name__)
 app.secret_key = b'sdfpow23'
-model = None
 
-print(app.root_path)
-
-def load_unet_model():
-    global model
-    model = load_model('../analysis/model_inception.h5', custom_objects={'dice_loss': dice_loss, 'dice_coeff': dice_coeff})
 
 @app.route('/')
 def index():
@@ -43,7 +34,7 @@ def vol():
                 uploaded_file.save(os.path.join("static", uploaded_file.filename))
 
         if atlas == "AAL":
-            atlas_nii = "tmp/atlas2post_AAL116_origin_MNI_T1.nii"
+            atlas_nii = "tmp/atlas2post_AAL116_origin_MNI_T1old.nii"
             atlas_txt = "tmp/AAL116.txt"
 
         df, imgs = calc_resec_vol(
@@ -58,10 +49,6 @@ def vol():
 
         df.sort_values(by="Remaining (%)", inplace=True)
 
-        with open('temp_reportdata.pickle', 'wb') as handle:
-            pickle.dump({'df': df, 'imgs': imgs}, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
         table_html = df.to_html(
                 table_id='report',
                 float_format=lambda x: '{0:.2f}'.format(x),
@@ -71,7 +58,7 @@ def vol():
 
         toc = time.perf_counter()
 
-        return redirect(url_for('report', vol_table=Markup(table_html), post_op_path=img.filename, mask_path=mask.filename))
+        return redirect(url_for('report', vol_table=Markup(table_html), vol_imgs=imgs, post_op_path=img.filename, mask_path=mask.filename))
     return render_template('calculate_vol.html')
 
 @app.route('/feedback', methods=['GET', 'POST'])
@@ -108,17 +95,66 @@ def report():
     post_op_path = request.args.get('post_op_path')
     mask_path = request.args.get('mask_path')
 
-    print(os.listdir("tmp"))
-    rendered_template = render_template('report.html', vol_table=Markup(vol_table), post_op_path=post_op_path, mask_path=mask_path)
+    HTML_TEMPLATE = '''
+        <!doctype html>
+        <html lang="en">
+        <head>
+            <!-- Required meta tags -->
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+            <!-- Bootstrap CSS -->
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+            <title>DeepResection Report</title>
+        </head>
+        
+        <body>
+
+
+                <!-- Viewer -->
+                <div class="background-box container">
+                    <div class="page-header">
+                        <h1>DeepResection Report</h1>
+                    </div>
+                
+                    <div class="row">
+                        <div class="table table-striped">
+                            {vol_table}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <img src="data:image/png;base64, {vol_imgs}"/>
+                    </div>
+                </div>
+
+        </body>
+        </html>
+        '''
+
+    img = base64.b64encode(open("./static/resection_views.png", "rb").read()).decode()
+
+    options = {'enable-local-file-access': None}
+    pdf = pdfkit.from_string(HTML_TEMPLATE.format(vol_table=Markup(vol_table), vol_imgs=str(img)), './static/report.pdf', css='./static/css/style.css', options=options)
+
+    print(os.listdir("tmp"))
     if request.method == 'POST':
         try:
             # rendered_template_enc = rendered_template.encode('utf-8') 
-            css = ['./static/css/style.css', './static/css/papaya.css']
-            pdf = pdfkit.from_string(rendered_template, 'report.pdf', css=css)
+            vol_table = request.args.get('vol_table')
+            vol_imgs = request.args.get('vol_imgs')
+            print("Print Test")
+            print("Vol ", vol_table)
+            # rendered_html_for_pdf = render_template('report_pdf.html', vol_table=Markup(vol_table), vol_imgs=vol_imgs)
+
+            css = ['./static/css/style.css']
+            options = {'enable-local-file-access': None}
+            pdf = pdfkit.from_string(HTML_TEMPLATE.format(vol_table=Markup(vol_table), vol_imgs=vol_imgs), 'report.pdf', css=css, options=options)
+
+            return render_template('report.html', vol_table=Markup(vol_table), post_op_path=post_op_path, mask_path=mask_path)
         except Exception as e:
             print(e)
-    return rendered_template
+    return render_template('report.html', vol_table=Markup(vol_table), post_op_path=post_op_path, mask_path=mask_path)
 
 @app.route('/mask', methods=['GET', 'POST'])
 def mask():
@@ -165,7 +201,7 @@ def mask():
         toc = time.perf_counter()
         print("Time elapsed: {:.4f}".format(toc - tic))
         
-        return redirect(url_for('report', vol_table=Markup(table_html), post_op_path=postop.filename, mask_path=mask_name))
+        return redirect(url_for('report', vol_table=Markup(table_html), vol_imgs=imgs, post_op_path=postop.filename, mask_path=mask_name))
     return render_template('generate_mask.html')    
 
 @app.route('/about')
@@ -173,7 +209,6 @@ def about():
     return render_template('about.html')
 
 if __name__ == '__main__':
-    print(("* Loading Keras model and Flask starting server..."
-        "please wait until server has fully started"))
-    # load_unet_model()
     app.run(debug=True)
+
+
