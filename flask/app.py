@@ -13,6 +13,8 @@ import base64
 app = Flask(__name__)
 app.secret_key = b'sdfpow23'
 
+import tensorflow as tf
+graph = tf.compat.v1.get_default_graph()
 
 @app.route('/')
 def index():
@@ -174,12 +176,16 @@ def mask():
 
         print(mask_name)
 
-        gen_mask(
-            os.path.join("static", postop.filename),
-            "static",
-            mask_name,
-            isContinuous
-        )
+        global graph
+
+        with graph.as_default():
+            gen_mask(
+                os.path.join("static", postop.filename),
+                "static",
+                mask_name,
+                isContinuous,
+                graph
+            )
 
         df, imgs = calc_resec_vol(
             os.path.join("static", postop.filename),
@@ -209,6 +215,4 @@ def about():
     return render_template('about.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
+    app.run(debug=False, threaded=False)

@@ -15,8 +15,8 @@ output_dir=${4}
 while true; do
     read -p "Is the entire resection continuous? [y/n]" yn
     case $yn in
-        [Yy]* ) is_continuous=true; break;;
-        [Nn]* ) is_continuous=false; break;;
+        [Yy]* ) is_continuous=1; break;;
+        [Nn]* ) is_continuous=0; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -27,13 +27,12 @@ done
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
 # generate a predicted mask NIFTI file for the post-operative image
-postop_full_file="data/${patient_id}/${postop_file}"
-python3 ./scripts/generate_mask.py ${postop_full_file} ${output_dir} ${mask_name} ${is_continuous^}
+python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${is_continuous}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
-atlas_file="analysis/${patient_id}/atlas2post/atlas2post_AAL116_origin_MNI_T1.nii"
+atlas_file="tools/atlases/atlas2post_AAL116_origin_MNI_T1.nii"
 
 atlas_mappings="tools/atlases/AAL116.txt"
 
-python3 ./scripts/calculate_resected_volumes.py ${postop_full_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
+python3 ./scripts/calculate_resected_volumes.py ${postop_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
