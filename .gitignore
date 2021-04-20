@@ -1,5 +1,7 @@
 data
 analysis
+model
+venv
 *.pyc
 __pycache__
 *.nii
