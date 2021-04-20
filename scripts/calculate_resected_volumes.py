@@ -13,145 +13,154 @@ import imageio
 import os
 import json
 import pandas as pd
-import matplotlib.pyplot as plt
 from vol_report import vol_report
 
-# define arguments and load data
-IMG_DIR = sys.argv[1]
-MASK_DIR = sys.argv[2]
-ATLAS_DIR = sys.argv[3]
-ATLAS_MAPPINGS = sys.argv[4]
-OUTPUT_DIR = sys.argv[5]
-OUTPUT_DIR = os.path.join(OUTPUT_DIR, "resected_results.txt")
+if __name__ == '__main__':
+    # define arguments and load data
+    IMG_DIR = sys.argv[1]
+    MASK_DIR = sys.argv[2]
+    ATLAS_DIR = sys.argv[3]
+    ATLAS_MAPPINGS = sys.argv[4]
+    OUTPUT_DIR = sys.argv[5]
+    
+    calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl=True)
 
-mask = nib.load(MASK_DIR)
-mask_data = mask.get_fdata()
 
-img = nib.load(IMG_DIR)
-img_data = img.get_fdata()
+def calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl=False):
+    if not mpl:
+        import matplotlib
+        matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    mask = nib.load(MASK_DIR)
+    mask_data = mask.get_fdata()
 
-atlas = nib.load(ATLAS_DIR)
-atlas_data = atlas.get_fdata()
+    img = nib.load(IMG_DIR)
+    img_data = img.get_fdata()
 
-# multiply the arrays to get ROIs of the regions contained in the resection zone
-combined = mask_data * atlas_data
+    atlas = nib.load(ATLAS_DIR)
+    atlas_data = atlas.get_fdata()
 
-# get each ROI value in the result
-roi_values = np.unique(combined)
+    # multiply the arrays to get ROIs of the regions contained in the resection zone
+    combined = mask_data * atlas_data
 
-roi_values = list(roi_values)
-roi_values = roi_values[1:]
+    # get each ROI value in the result
+    roi_values = np.unique(combined)
 
-# get individual voxel dimensions and convert to centimeters
-header = mask.header
-voxel_dims = header.get_zooms()
-new_dims = (voxel_dims[0] / 10, voxel_dims[1] / 10, voxel_dims[2] / 10)
+    roi_values = list(roi_values)
+    roi_values = roi_values[1:]
 
-# find the volume of resection in cubic centimeters
-mask_voxels = np.sum(mask_data)
-resection_volume = mask_voxels * new_dims[0] * new_dims[1] * new_dims[2]
+    # get individual voxel dimensions and convert to centimeters
+    header = mask.header
+    voxel_dims = header.get_zooms()
+    new_dims = (voxel_dims[0] / 10, voxel_dims[1] / 10, voxel_dims[2] / 10)
 
-# open the atlas mappings file and define the mappings from atlas ROI pixel value to ROI name
-mappings = {}
-atlas_txt = open(ATLAS_MAPPINGS, "r")
-for line in atlas_txt:
-    entry = line.split()
-    # find the key
-    for e in entry:
-        try:
-            k = int(e)
-        except:
-            continue
-    # find the value
-    entry.remove(str(k))
-    v = max(entry, key = len)
-    mappings[k] = v
+    # find the volume of resection in cubic centimeters
+    mask_voxels = np.sum(mask_data)
+    resection_volume = mask_voxels * new_dims[0] * new_dims[1] * new_dims[2]
+    print(resection_volume)
 
-# initialize the list of results to be printed to the 
-results = []
-volume_str = "Total resection volume (cubic cm): " + str(resection_volume)
-results.append(volume_str)
+    # open the atlas mappings file and define the mappings from atlas ROI pixel value to ROI name
+    mappings = {}
+    atlas_txt = open(ATLAS_MAPPINGS, "r")
+    for line in atlas_txt:
+        entry = line.split()
+        # find the key
+        for e in entry:
+            try:
+                k = int(e)
+            except:
+                continue
+        # find the value
+        entry.remove(str(k))
+        v = max(entry, key = len)
+        mappings[k] = v
 
-# loop through each ROI, perform calculations, and add entry to the list of results
-df = []
-for roi in roi_values:
-    name = mappings[int(roi)]
-    total = np.sum(atlas_data == roi)
-    resected = np.sum(combined == roi)
-    percentage = (resected/total) * 100
-    percentage = np.round(percentage, 3)
-    percentage_remaining = 100 - percentage
-    volume = resected * new_dims[0] * new_dims[1] * new_dims[2]
-    result_str = name + ": " + str(percentage_remaining) + "% remaining"
-    results.append(result_str)
-    df.append({'Region': name, 'Remaining (%)': percentage_remaining, 'Volume Resected (cubic cm)': volume})
+    # initialize the list of results to be printed to the 
+    results = []
+    volume_str = "Total resection volume (cubic cm): " + str(resection_volume)
+    results.append(volume_str)
 
-# print and save results
-print('Resection results, by region:')
-output_str = ""
-for result in results:
-    print(result)
-    output_str = output_str + result + "\n"
+    # loop through each ROI, perform calculations, and add entry to the list of results
+    df = []
+    for roi in roi_values:
+        name = mappings[int(roi)]
+        total = np.sum(atlas_data == roi)
+        resected = np.sum(combined == roi)
+        percentage = (resected/total) * 100
+        percentage = np.round(percentage, 3)
+        percentage_remaining = 100 - percentage
+        volume = resected * new_dims[0] * new_dims[1] * new_dims[2]
+        result_str = name + ": " + str(percentage_remaining) + "% remaining"
+        results.append(result_str)
+        df.append({'Region': name, 'Remaining (%)': percentage_remaining, 'Volume Resected (cubic cm)': volume})
+    df.append({'Region': "Total Resection", 'Remaining (%)': None, 'Volume Resected (cubic cm)': resection_volume})
 
-with open(OUTPUT_DIR, "w") as f:
-    f.write(output_str)
+    # print and save results
+    print('Resection results, by region:')
+    output_str = ""
+    for result in results:
+        print(result)
+        output_str = output_str + result + "\n"
 
-# save PDF
-HTML_DIR = os.path.join(sys.argv[5], "resection_report.html")
-df = pd.DataFrame(df)
-df.to_html(HTML_DIR)
+    TXT_FILE = os.path.join(OUTPUT_DIR, "resected_results.txt")
+    with open(TXT_FILE, "w") as f:
+        f.write(output_str)
 
-# figure for output
-fig, ax = plt.subplots(3,2)
+    # save PDF
+    HTML_DIR = os.path.join(OUTPUT_DIR, "resection_report.html")
+    df = pd.DataFrame(df)
+    df.to_html(HTML_DIR)
 
-#[x,y,z] = np.shape(mask_data)
-mask_data = np.ma.masked_where(mask_data == 0, mask_data)
-x = np.argmax( np.sum(mask_data, axis=(1,2) ) )
-y = np.argmax( np.sum(mask_data, axis=(0,2) ) )
-z = np.argmax( np.sum(mask_data, axis=(0,1) ) )
+    # figure for output
+    fig, ax = plt.subplots(3,2)
 
-# Sagittal
-fig.add_subplot(3,2,1)
-plt.imshow(np.rot90(img_data[x,:,:]), cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.axis('off')
-fig.add_subplot(3,2,2)
-plt.imshow(np.rot90(img_data[x,:,:]), cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.imshow(np.rot90(mask_data[x,:,:]), 'cool', alpha=0.4)
-plt.axis('off')
+    #[x,y,z] = np.shape(mask_data)
+    mask_data = np.ma.masked_where(mask_data == 0, mask_data)
+    x = np.argmax( np.sum(mask_data, axis=(1,2) ) )
+    y = np.argmax( np.sum(mask_data, axis=(0,2) ) )
+    z = np.argmax( np.sum(mask_data, axis=(0,1) ) )
 
-# Coronal
-fig.add_subplot(3,2,3)
-plt.imshow(np.rot90(img_data[:,y,:]), cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.axis('off')
-fig.add_subplot(3,2,4)
-plt.imshow(np.rot90(img_data[:,y,:]), cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.imshow(np.rot90(mask_data[:,y,:]), 'cool', alpha=0.4)
-plt.axis('off')
+    # Sagittal
+    fig.add_subplot(3,2,1)
+    plt.imshow(np.rot90(img_data[x,:,:]), cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.axis('off')
+    fig.add_subplot(3,2,2)
+    plt.imshow(np.rot90(img_data[x,:,:]), cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.imshow(np.rot90(mask_data[x,:,:]), 'cool', alpha=0.4)
+    plt.axis('off')
 
-# Axial
-fig.add_subplot(3,2,5)
-plt.imshow(img_data[:,:,z], cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.axis('off')
-fig.add_subplot(3,2,6)
-plt.imshow(img_data[:,:,z], cmap = "gray")
-plt.clim(np.min(img_data), np.max(img_data))
-plt.imshow(mask_data[:,:,z], 'cool', alpha=0.4)
-plt.axis('off')
+    # Coronal
+    fig.add_subplot(3,2,3)
+    plt.imshow(np.rot90(img_data[:,y,:]), cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.axis('off')
+    fig.add_subplot(3,2,4)
+    plt.imshow(np.rot90(img_data[:,y,:]), cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.imshow(np.rot90(mask_data[:,y,:]), 'cool', alpha=0.4)
+    plt.axis('off')
 
-[axi.set_axis_off() for axi in ax.ravel()]
-fig.set_size_inches(10, 6)
-plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=-0.5, hspace=0.1)
-plt.tight_layout()
+    # Axial
+    fig.add_subplot(3,2,5)
+    plt.imshow(img_data[:,:,z], cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.axis('off')
+    fig.add_subplot(3,2,6)
+    plt.imshow(img_data[:,:,z], cmap = "gray")
+    plt.clim(np.min(img_data), np.max(img_data))
+    plt.imshow(mask_data[:,:,z], 'cool', alpha=0.4)
+    plt.axis('off')
 
-FIG_DIR = os.path.join(sys.argv[5], "resection_views.png")
-fig.savefig(FIG_DIR, transparent=True)
+    [axi.set_axis_off() for axi in ax.ravel()]
+    fig.set_size_inches(10, 6)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=-0.5, hspace=0.1)
+    plt.tight_layout()
 
-with open(HTML_DIR, "a") as myfile:
-    myfile.write( "\n <img src=\"" + "resection_views.png" + "\" align=\"top right\"/>" )
+    FIG_DIR = os.path.join(OUTPUT_DIR, "resection_views.png")
+    fig.savefig(FIG_DIR, transparent=True)
 
-vol_report(HTML_DIR, df, fig)
+    with open(HTML_DIR, "a") as myfile:
+        myfile.write( "\n <img src=\"" + "resection_views.png" + "\" align=\"top right\"/>" )
+    return(df, fig)

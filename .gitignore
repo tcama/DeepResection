@@ -1,3 +1,6 @@
 data
 analysis
-
+*.pyc
+__pycache__
+*.nii
+*.gz

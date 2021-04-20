@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Viewer -->
+    <div class="container-fluid">
+      <div class="page-header">
+        <h1>{% block title %} DeepResection Report {% endblock %}</h1>
+      </div>
+  
+      <div class="row">
+          <div class="table table-striped col">
+          {{ vol_table }}
+        </div>
+        <!-- <div class="col">
+          {{ vol_imgs }}
+        </div> -->
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#feedbackModal" style="background-color: #011F5B;">
+            Resection Feedback
+          </button>
+        </div>
+        <div class="col text-center">
+          <form action="{{ url_for('report') }}" method="POST">
+            <button class="btn btn-primary" type="submit" style="background-color: #011F5B;">
+              Save PDF
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+

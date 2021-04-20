@@ -8,6 +8,7 @@ pandas==1.0.5
 Pillow==7.1.2
 radiomics==0.1
 scikit_learn==0.23.1
-skimage==0.0
 tensorflow==2.2.0
+flask==1.1.2
 segmentation_models==1.0.1
+pdfkit==0.6.1 

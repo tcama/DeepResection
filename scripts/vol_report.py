@@ -22,3 +22,5 @@ def vol_report(HTML_DIR, df, fig):
 
     with open(HTML_DIR, 'w') as f:
         f.write(t.render(vals))
+    
+    return(HTML_DIR)

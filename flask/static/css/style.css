@@ -1,0 +1,11 @@
+* {
+  /* background-color: #94d0d1; */
+  /* color: black; */
+}
+.page-header {
+  padding: 60px;
+  text-align: center;
+  background: #011F5B;
+  color: white;
+  font-size: 30px;
+}
