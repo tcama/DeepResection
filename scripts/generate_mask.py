@@ -68,7 +68,7 @@ def dice_loss(y_true, y_pred):
     loss = 1 - dice_coeff(y_true, y_pred)
     return loss
 
-def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS, graph):
+def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS):
     # print(tb._SYMBOLIC_SCOPE)
     # load the post-operative file and convert to a numpy array
     postop = nib.load(POSTOP_FILE)
@@ -98,6 +98,7 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS, graph):
 
     # load the pre-trained neural network weights
     BACKBONE = 'efficientnetb1'
+    graph = tf.Graph()
 
     with graph.as_default():
         base_model = sm.Unet(BACKBONE, encoder_weights=None, classes=1, activation='sigmoid')
@@ -107,7 +108,7 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS, graph):
 
 
         model = Model(inp, out, name = base_model.name)
-        model.load_weights('../analysis/model_efficientnet1_FINAL_fold1.h5')
+        model.load_weights('model/model.h5')
 
         # predict the resected tissue for each slice in the 3D input array
         preds = model.predict(input_arr, verbose = 1)
@@ -147,6 +148,12 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS, graph):
     ni_mask = nib.Nifti1Image(output, postop.affine)
     MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, MASK_NAME)
     nib.save(ni_mask, MASK_OUTPUT_FILE)
+
+    # save out inverse mask (for cost function masking)
+    inv_output = np.ones( output.shape ) - output
+    ni_inv_mask = nib.Nifti1Image(inv_output, postop.affine)
+    MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'inv_' + MASK_NAME)
+    nib.save(ni_inv_mask, MASK_OUTPUT_FILE)
 
 if __name__ == "__main__":
     # define arguments and load data

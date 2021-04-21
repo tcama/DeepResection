@@ -15,17 +15,6 @@ import json
 import pandas as pd
 from vol_report import vol_report
 
-if __name__ == '__main__':
-    # define arguments and load data
-    IMG_DIR = sys.argv[1]
-    MASK_DIR = sys.argv[2]
-    ATLAS_DIR = sys.argv[3]
-    ATLAS_MAPPINGS = sys.argv[4]
-    OUTPUT_DIR = sys.argv[5]
-    
-    calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl=True)
-
-
 def calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl=False):
     if not mpl:
         import matplotlib
@@ -164,3 +153,13 @@ def calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl
     with open(HTML_DIR, "a") as myfile:
         myfile.write( "\n <img src=\"" + "resection_views.png" + "\" align=\"top right\"/>" )
     return(df, fig)
+
+if __name__ == '__main__':
+    # define arguments and load data
+    IMG_DIR = sys.argv[1]
+    MASK_DIR = sys.argv[2]
+    ATLAS_DIR = sys.argv[3]
+    ATLAS_MAPPINGS = sys.argv[4]
+    OUTPUT_DIR = sys.argv[5]
+    
+    calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl=True)
