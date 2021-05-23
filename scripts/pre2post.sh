@@ -3,7 +3,7 @@
 # This code performs a non-diffeomorphic registration of the pre-operative image to the post-operative image. It also 
 # provides atlas segmentations based on the pre-operative image.
 #
-# Usage: pre2post.sh subID preop.nii.gz postop.nii.gz
+# Usage: pre2post.sh subID preop.nii.gz postop.nii.gz output_dir
 #
 # Thomas Campbell Arnold 
 # tcarnold@seas.upenn.edu
