@@ -14,7 +14,7 @@ Deep learning code for neurosurgery resection zone segmentation on T1 MRI, imple
 
 - Linux OS / Ubuntu
 
-- Python package dependencies in requirements.txt
+- Python package dependencies in `requirements.txt`
 
 - Postoperative (and preoperative) MRI in NIfTI format
 
@@ -42,10 +42,10 @@ Run pipeline with deformable registration:
 
 After running the pipeline, the predicted mask should be a NIfTI file ending with `predicted_mask.nii` in the specified output directory. It can then be opened in an image viewer, such as ITK-Snap, alongside the postoperative input.
 
-<img src='images/sample_predicted_mask.png' align="left" width=384>
+<img src='images/sample_predicted_mask.png' align="center" width=384>
 
 ### Volumetric resection report ###
 
-If running the full pipeline, the volumetric results should be 
+If running the full pipeline, the numeric volumetric resection results should be in `output_dir/resected_results.txt`, the HTML report should be in `output_dir/resection_report.html`, and a visualization of the resection should be in `output_dir/resection_views.png`.
 
 
