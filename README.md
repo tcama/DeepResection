@@ -40,8 +40,12 @@ Run pipeline with deformable registration:
 
 ### Predicted mask ###
 
-After running the pipeline, the predicted mask should be a NIfTI file ending with `predicted_mask.nii` in the specified output directory.
+After running the pipeline, the predicted mask should be a NIfTI file ending with `predicted_mask.nii` in the specified output directory. It can then be opened in an image viewer, such as ITK-Snap, alongside the postoperative input.
+
+<img src='images/sample_predicted_mask.png' align="left" width=384>
 
 ### Volumetric resection report ###
+
+If running the full pipeline, the volumetric results should be 
 
 
