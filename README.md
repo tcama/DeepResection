@@ -12,9 +12,11 @@ Deep learning code for neurosurgery resection zone segmentation on T1 MRI, imple
 
 ## Prerequisites ##
 
-Linux OS / Ubuntu
+- Linux OS / Ubuntu
 
-Python package dependencies in requirements.txt
+- Python package dependencies in requirements.txt
+
+- Postoperative (and preoperative) MRI in NIfTI format
 
 ## Getting Started ##
 
@@ -22,10 +24,24 @@ Clone the repo: `git clone https://github.com/tcama/DeepResection.git`
 
 ## Running the Pipeline ##
 
-Run segmentation only: `./pipeline/resection_segmentation_only_pipeline.sh`
+Run segmentation only:
 
-Run entire pipeline, including volumetric resection report: `./pipeline/resection_pipeline.sh`
+`./pipeline/resection_segmentation_only_pipeline.sh patient_name postop_mri.nii output_dir`
 
-Run pipeline with deformable registration: `./pipeline/resection_deformable_pipeline.sh`
+Run entire pipeline, including volumetric resection report:
+
+`./pipeline/resection_pipeline.sh patient_name preop_mri.nii postop_mri.nii output_dir`
+
+Run pipeline with deformable registration:
+
+`./pipeline/resection_deformable_pipeline.sh patient_name preop_mri.nii postop_mri.nii output_dir`
+
+## Example outputs ##
+
+### Predicted mask ###
+
+After running the pipeline, the predicted mask should be a NIfTI file ending with `predicted_mask.nii` in the specified output directory.
+
+### Volumetric resection report ###
 
 
