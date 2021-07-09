@@ -44,7 +44,7 @@ Run pipeline with deformable registration:
 
 After running the pipeline, the predicted mask should be a NIfTI file ending with `predicted_mask.nii` in the specified output directory. It can then be opened in an image viewer, such as ITK-Snap, alongside the postoperative input.
 
-<img src='images/sample_predicted_mask.png' align="center" width=500>
+<img src='images/sample_predicted_mask.png' align="center" width=700>
 
 ### Volumetric resection report ###
 
@@ -69,11 +69,11 @@ Cerebelum_3_R: 99.81% remaining
 
 HTML report:
 
-<img src='images/sample_html_report.png' align="center" width=500>
+<img src='images/sample_html_report.png' align="center" width=700>
 
 Resection views PNG output:
 
-<img src='images/sample_resection_views.png' align="center" width=500>
+<img src='images/sample_resection_views.png' align="center" width=700>
 
 ### GUI ###
 
