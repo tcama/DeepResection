@@ -75,6 +75,6 @@ Resection views PNG output:
 
 <img src='images/sample_resection_views.png' align="center" width=700>
 
-### GUI ###
-
+### Web App ###
+A web application is also provided for easy and interactive clinical use. 
 
