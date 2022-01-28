@@ -36,8 +36,6 @@ Run pipeline with deformable registration:
 
 `./pipeline/resection_deformable_pipeline.sh patient_name preop_mri.nii postop_mri.nii output_dir`
 
-## Using the GUI ##
-
 ## Example outputs ##
 
 ### Predicted mask ###
