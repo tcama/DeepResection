@@ -16,7 +16,7 @@ import antspynet
 
 pat_id = sys.argv[1]
 PRE2POST = sys.argv[2]
-OUT_DIR = sys.agrv[3]
+OUT_DIR = sys.argv[3]
 
 preop = ants.image_read(PRE2POST)
 DKT = antspynet.utilities.desikan_killiany_tourville_labeling(preop, do_preprocessing=True, return_probability_images=False, do_lobar_parcellation=False, antsxnet_cache_directory=None, verbose=False)
