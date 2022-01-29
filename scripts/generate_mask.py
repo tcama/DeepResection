@@ -17,8 +17,6 @@ import shutil
 # tf.disable_v2_behavior()
 import tensorflow as tf
 from keras.models import Model, load_model
-from keras.layers import Input, Conv2D
-from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
 from skimage.measure import label
