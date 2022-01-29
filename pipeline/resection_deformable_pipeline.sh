@@ -29,10 +29,12 @@ python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${i
 # apply an atlas to pre-operative image, register atlas to post-operative image
 ./scripts/pre2post_deformable.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir} ${output_dir}/inv_${mask_name}
 
+# register DKL atlas to preoperative image
+python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_file} ${output_dir}
+
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
-atlas_file="${output_dir}/atlas2post/atlas2post_AAL116_origin_MNI_T1.nii"
-
-atlas_mappings="tools/atlases/AAL116.txt"
+atlas_file="${output_dir}/${patient_id}_DKT_DL.nii.gz"
+atlas_mappings="atlas/dkt_atlas_mappings.txt"
 
 python3 ./scripts/calculate_resected_volumes.py ${postop_file} ${mask_file} ${atlas_file} ${atlas_mappings} ${output_dir}
