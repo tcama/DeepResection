@@ -12,6 +12,7 @@ preop_file=${2}
 postop_file=${3}
 output_dir=${4}
 brainlesionmask=${5}
+preop_onlyfile="$(basename $preop_file)"
 
 while true; do
     read -p "Is the entire resection continuous? [y/n]" yn
@@ -30,7 +31,7 @@ python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${i
 ./scripts/pre2post_deformable.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir} ${output_dir}/inv_${mask_name}
 
 # register DKL atlas to preoperative image
-python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_file} ${output_dir}
+python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_onlyfile} ${output_dir}
 
 # generate a txt file that calculates the resection volume and percent remaining by brain region
 mask_file="${output_dir}/${mask_name}"
