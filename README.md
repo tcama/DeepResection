@@ -14,6 +14,8 @@ Deep learning code for neurosurgery resection zone segmentation on T1 MRI, imple
 
 - Linux OS / Ubuntu
 
+- Python 3.6
+
 - Python package dependencies in `requirements.txt`
 
 - Postoperative (and preoperative) MRI in NIfTI format
