@@ -99,65 +99,65 @@
 2031: right supramarginal
 2034: right transverse temporal
 2035: right insula
-1002:  left caudal anterior cingulate
-1003:  left caudal middle frontal
-1012:  left lateral orbitofrontal
-1014:  left medial orbitofrontal
-1017:  left paracentral
-1018:  left pars opercularis
-1019:  left pars orbitalis
-1020:  left pars triangularis
-1024:  left precentral
-1026:  left rostral anterior cingulate
-1027:  left rostral middle frontal
-1028:  left superior frontal
-2002:  right caudal anterior cingulate
-2003:  right caudal middle frontal
-2012:  right lateral orbitofrontal
-2014:  right medial orbitofrontal
-2017:  right paracentral
-2018:  right pars opercularis
-2019:  right pars orbitalis
-2020:  right pars triangularis
-2024:  right precentral
-2026:  right rostral anterior cingulate
-2027:  right rostral middle frontal
-2028:  right superior frontal
-1008:  left inferior parietal
-1010:  left isthmus cingulate
-1022:  left postcentral
-1023:  left posterior cingulate
-1025:  left precuneus
-1029:  left superior parietal
-1031:  left supramarginal
-2008:  right inferior parietal
-2010:  right isthmus cingulate
-2022:  right postcentral
-2023:  right posterior cingulate
-2025:  right precuneus
-2029:  right superior parietal
-2031:  right supramarginal
-1006:  left entorhinal
-1007:  left fusiform
-1009:  left inferior temporal
-1015:  left middle temporal
-1016:  left parahippocampal
-1030:  left superior temporal
-1034:  left transverse temporal
-2006:  right entorhinal
-2007:  right fusiform
-2009:  right inferior temporal
-2015:  right middle temporal
-2016:  right parahippocampal
-2030:  right superior temporal
-2034:  right transverse temporal
-1005:  left cuneus
-1011:  left lateral occipital
-1013:  left lingual
-1021:  left pericalcarine
-2005:  right cuneus
-2011:  right lateral occipital
-2013:  right lingual
-2021:  right pericalcarine
-1035:  left insula
-2035:  right insula
+1002: left caudal anterior cingulate
+1003: left caudal middle frontal
+1012: left lateral orbitofrontal
+1014: left medial orbitofrontal
+1017: left paracentral
+1018: left pars opercularis
+1019: left pars orbitalis
+1020: left pars triangularis
+1024: left precentral
+1026: left rostral anterior cingulate
+1027: left rostral middle frontal
+1028: left superior frontal
+2002: right caudal anterior cingulate
+2003: right caudal middle frontal
+2012: right lateral orbitofrontal
+2014: right medial orbitofrontal
+2017: right paracentral
+2018: right pars opercularis
+2019: right pars orbitalis
+2020: right pars triangularis
+2024: right precentral
+2026: right rostral anterior cingulate
+2027: right rostral middle frontal
+2028: right superior frontal
+1008: left inferior parietal
+1010: left isthmus cingulate
+1022: left postcentral
+1023: left posterior cingulate
+1025: left precuneus
+1029: left superior parietal
+1031: left supramarginal
+2008: right inferior parietal
+2010: right isthmus cingulate
+2022: right postcentral
+2023: right posterior cingulate
+2025: right precuneus
+2029: right superior parietal
+2031: right supramarginal
+1006: left entorhinal
+1007: left fusiform
+1009: left inferior temporal
+1015: left middle temporal
+1016: left parahippocampal
+1030: left superior temporal
+1034: left transverse temporal
+2006: right entorhinal
+2007: right fusiform
+2009: right inferior temporal
+2015: right middle temporal
+2016: right parahippocampal
+2030: right superior temporal
+2034: right transverse temporal
+1005: left cuneus
+1011: left lateral occipital
+1013: left lingual
+1021: left pericalcarine
+2005: right cuneus
+2011: right lateral occipital
+2013: right lingual
+2021: right pericalcarine
+1035: left insula
+2035: right insula
