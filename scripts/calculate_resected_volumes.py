@@ -52,16 +52,14 @@ def calc_resec_vol(IMG_DIR, MASK_DIR, ATLAS_DIR, ATLAS_MAPPINGS, OUTPUT_DIR, mpl
     mappings = {}
     atlas_txt = open(ATLAS_MAPPINGS, "r")
     for line in atlas_txt:
-        entry = line.split()
+        entry = line.split(': ')
         # find the key
-        for e in entry:
-            try:
-                k = int(e)
-            except:
-                continue
+        try:
+            k = int(entry[0])
+        except:
+            continue
         # find the value
-        entry.remove(str(k))
-        v = max(entry, key = len)
+        v = entry[-1][:-1]
         mappings[k] = v
 
     # initialize the list of results to be printed to the 
