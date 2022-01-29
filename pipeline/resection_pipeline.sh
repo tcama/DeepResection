@@ -11,6 +11,7 @@ patient_id=${1}
 preop_file=${2}
 postop_file=${3}
 output_dir=${4}
+preop_onlyfile="$(basename $preop_file)"
 
 while true; do
     read -p "Is the entire resection continuous? [y/n]" yn
@@ -25,7 +26,7 @@ done
 ./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir}
 
 # register DKL atlas to preoperative image
-python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_file} ${output_dir}
+python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_onlyfile} ${output_dir}
 
 mask_name="${patient_id}_predicted_mask.nii.gz"
 
