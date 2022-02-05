@@ -10,7 +10,6 @@ radiomics==0.1
 scikit_learn==0.23.1
 scikit-image
 tensorflow==2.6.2
-tensorflow_probability==0.17.0
 flask==1.1.2
 segmentation_models==1.0.1
 h5py==2.10.0
