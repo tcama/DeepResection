@@ -23,6 +23,9 @@ while true; do
     esac
 done
 
+# create output directory
+mkdir ${output_dir}
+
 # generate a predicted mask NIFTI file for the post-operative image
 mask_name="${patient_id}_predicted_mask.nii.gz"
 python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${is_continuous}
