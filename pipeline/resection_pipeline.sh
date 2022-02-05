@@ -22,6 +22,9 @@ while true; do
     esac
 done
 
+# create output directory
+mkdir ${output_dir}
+
 # apply an atlas to pre-operative image, register atlas to post-operative image
 ./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir}
 
