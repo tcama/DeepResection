@@ -28,9 +28,6 @@ preop_onlyfile="$(basename $preop_file)"
 postop_onlypath="$(dirname $postop_file)"
 postop_onlyfile="$(basename $postop_file)"
 
-# make output folders
-mkdir ${output_dir}
-
 ####### Affine registstration of preop to postop image ######## 
 
 # Registration of preop to postop
