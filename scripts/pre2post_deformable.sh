@@ -30,7 +30,6 @@ postop_onlypath="$(dirname $postop_file)"
 postop_onlyfile="$(basename $postop_file)"
 
 # make output folders
-mkdir ${output_dir}
 TEMPLATE_DIR=./tools/OasisTemplate/
 
 ####### brain extraction #######
