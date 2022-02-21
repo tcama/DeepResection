@@ -1,12 +1,11 @@
-Total resection volume (cubic cm): 10.518
-Hippocampus_R: 74.044% remaining
-ParaHippocampal_R: 53.194% remaining
-Amygdala_R: 99.845% remaining
-Fusiform_R: 89.461% remaining
-Temporal_Sup_R: 99.892% remaining
-Temporal_Pole_Sup_R: 99.939% remaining
-Temporal_Mid_R: 91.464% remaining
-Temporal_Pole_Mid_R: 98.717% remaining
-Temporal_Inf_R: 90.72% remaining
-Cerebelum_3_R: 99.313% remaining
-Cerebelum_4_5_R: 97.469% remaining
+Total resection volume (cubic cm): 15.837669372558594
+Hippocampus_R: 93.471% remaining
+ParaHippocampal_R: 45.98% remaining
+Amygdala_R: 93.445% remaining
+Fusiform_R: 83.507% remaining
+Temporal_Pole_Sup_R: 77.621% remaining
+Temporal_Mid_R: 92.381% remaining
+Temporal_Pole_Mid_R: 49.312% remaining
+Temporal_Inf_R: 85.627% remaining
+Cerebelum_3_R: 99.906% remaining
+Cerebelum_4_5_R: 99.561% remaining
