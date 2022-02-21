@@ -14,6 +14,8 @@ Deep learning code for neurosurgery resection zone segmentation on T1 MRI, imple
 
 - Linux OS / Ubuntu
 
+- Python 3.6
+
 - Python package dependencies in `requirements.txt`
 
 - Postoperative (and preoperative) MRI in NIfTI format
@@ -35,8 +37,6 @@ Run entire pipeline, including volumetric resection report:
 Run pipeline with deformable registration:
 
 `./pipeline/resection_deformable_pipeline.sh patient_name preop_mri.nii postop_mri.nii output_dir`
-
-## Using the GUI ##
 
 ## Example outputs ##
 
@@ -75,6 +75,23 @@ Resection views PNG output:
 
 <img src='images/sample_resection_views.png' align="center" width=700>
 
-### GUI ###
+### Web App ###
+A web application is also provided for easy and interactive clinical use. The home page consists of two pipelines: Resection Mask and Volumetric Report.
 
+<img src='images/gui_home_tablet.png' align="center" width=400>
 
+The resection mask page allows you to select if the mask is continuous and upload the post-operative MRI. The patient ID is used for labeling files and a drop down menu gives the option of different atlases for the report.
+
+<img src='images/gui_mask_tablet.png' align="center" width=400>
+
+If the DeepResection model has already been applied and the mask is given, then the Volumetric Report pipeline generates the report.
+
+<img src='images/gui_volumetric_tablet.png' align="center" width=400>
+
+The report consists of a table with regions from the selected atlas and estimated resected volume. The widget allows for the user to scan through cross sections of the post-operative MRI and the mask is superimposed in blue. An option to save a PDF of the report is given.
+
+<img src='images/gui_report_tablet.png' align="center" width=400>
+
+An option for the user to give feedback is given. This feedback will be used to improve the DeepResection pipeline.
+
+<img src='images/gui_feedback_tablet.png' align="center" width=400>
