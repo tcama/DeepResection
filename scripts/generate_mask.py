@@ -148,12 +148,6 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS):
     MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, MASK_NAME)
     nib.save(ni_mask, MASK_OUTPUT_FILE)
 
-    # save out inverse mask (for cost function masking)
-    inv_output = np.ones( output.shape ) - output
-    ni_inv_mask = nib.Nifti1Image(inv_output, postop.affine)
-    MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'inv_' + MASK_NAME)
-    nib.save(ni_inv_mask, MASK_OUTPUT_FILE)
-
 if __name__ == "__main__":
     # define arguments and load data
     POSTOP_FILE = sys.argv[1]

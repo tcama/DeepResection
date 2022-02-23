@@ -26,7 +26,7 @@ done
 mkdir ${output_dir}
 
 # apply an atlas to pre-operative image, register atlas to post-operative image
-./scripts/pre2post.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir}
+python3 ./scripts/pre2post.py ${patient_id} ${preop_file} ${postop_file} ${output_dir}
 
 # register DKL atlas to preoperative image
 python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_onlyfile} ${output_dir}

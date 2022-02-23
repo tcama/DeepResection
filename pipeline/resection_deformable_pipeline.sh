@@ -26,11 +26,10 @@ mkdir ${output_dir}
 
 # generate a predicted mask NIFTI file for the post-operative image
 mask_name="${patient_id}_predicted_mask.nii.gz"
-inv_mask_name="${output_dir}/inv_${mask_name}"
 python3 ./scripts/generate_mask.py ${postop_file} ${output_dir} ${mask_name} ${is_continuous}
 
 # apply an atlas to pre-operative image, register atlas to post-operative image
-./scripts/pre2post_deformable.sh ${patient_id} ${preop_file} ${postop_file} ${output_dir} ${inv_mask_name}
+python3 ./scripts/pre2post_deformable.py ${patient_id} ${preop_file} ${postop_file} ${output_dir} "${output_dir}/${mask_name}"
 
 # register DKL atlas to preoperative image
 python3 ./scripts/register_atlas_to_preop.py ${patient_id} ${output_dir}/pre2post_${preop_onlyfile} ${output_dir}
