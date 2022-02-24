@@ -16,9 +16,8 @@ import shutil
 # import tensorflow.compat.v1 as tf
 # tf.disable_v2_behavior()
 import tensorflow as tf
-from keras.models import Model, load_model
 from keras.layers import Input, Conv2D
-from keras.optimizers import Adam
+from keras.models import Model, load_model
 from keras.utils.generic_utils import get_custom_objects
 import warnings
 from skimage.measure import label
@@ -108,7 +107,7 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS):
 
 
         model = Model(inp, out, name = base_model.name)
-        model.load_weights('model/model.h5')
+        model.load_weights('../model/model_efficientnet1_FINAL_fold1.h5')
 
         # predict the resected tissue for each slice in the 3D input array
         preds = model.predict(input_arr, verbose = 1)
@@ -148,12 +147,6 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS):
     ni_mask = nib.Nifti1Image(output, postop.affine)
     MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, MASK_NAME)
     nib.save(ni_mask, MASK_OUTPUT_FILE)
-
-    # save out inverse mask (for cost function masking)
-    inv_output = np.ones( output.shape ) - output
-    ni_inv_mask = nib.Nifti1Image(inv_output, postop.affine)
-    MASK_OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'inv_' + MASK_NAME)
-    nib.save(ni_inv_mask, MASK_OUTPUT_FILE)
 
 if __name__ == "__main__":
     # define arguments and load data

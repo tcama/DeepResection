@@ -1,0 +1,17 @@
+tree d66e0caaa0f8c9ed3829506817473ae9d87cc6c9
+parent 4fed9c3c4d0249b40bf76f5dac6c8c2c1414f785
+author Ramya Muthukrishnan <51800150+ramyamut@users.noreply.github.com> 1643423591 -0500
+committer GitHub <noreply@github.com> 1643423591 -0500
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ wsBcBAABCAAQBQJh9KdnCRBK7hj4Ov3rIwAAOtgIAD2leRhAdMaEfp1be73gqSMC
+ HQ7a7fCu2e52XauPACyAckjHTd1EIofyZqcZ4wGXEDLBVVrkqse/PbbQ/CKe4yqM
+ +QM1oUwgq0yF40nSxS5XiTDNvkRRnkPa7dSiZIPVFZcARwsE2UvbbR13vBIqaUrj
+ JXSZtF8RB+ycpU0ke4s+FnNaUsyo2F4NEllthxU2u8+MWa6VIww/7c9dN/wtYEf4
+ WtDe0lNEaJYoNZo4vSFdC50pILXv0Ogjz/NTIGpYvzB8wTv4hbvte1jHhVncZS3F
+ f0xUklscrRqEtgC/ZGEi5vguelGaqo3BNBmCbdUg3o1lYy2kYN41MHwzeTw5f6k=
+ =bcdW
+ -----END PGP SIGNATURE-----
+ 
+
+added script for DKT atlas segmentation
