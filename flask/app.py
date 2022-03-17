@@ -1,8 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os, sys
+
 sys.path.insert(1, '../scripts')
 from calculate_resected_volumes import calc_resec_vol
 from generate_mask import gen_mask
+from pre2post import pre2post
+from pre2post_deformable import pre2post_deformable
+from register_atlas_to_preop import register_atlas_to_preop
+
 from jinja2 import Template
 from flask import Markup
 import sqlite3
@@ -165,34 +170,77 @@ def mask():
         patient_id = request.form['id']
         atlas = request.form['atlas']
         isContinuous = 'continuous' in request.form
-        postop = request.files['file']
-        postop.save(os.path.join("static", postop.filename))
+        # postop = request.files['file']
+        
+        if len(request.files.getlist("file")) == 2:
+            [preop, postop] = request.files.getlist("file")
+        elif len(request.files.getlist("file")) == 3:
+            [preop, postop, mask] = request.files.getlist("file")
+            mask.save(os.path.join("static", mask.filename))
 
-        if atlas == "AAL":
-            atlas_nii = "tmp/atlas2post_AAL116_origin_MNI_T1.nii"
-            atlas_txt = "tmp/AAL116.txt"
+        preop.save(os.path.join("static", preop.filename))
+        postop.save(os.path.join("static", postop.filename))
+        
+        isDeformable = "deformable" in request.form
+        # Deprecated    
+        # if atlas == "AAL":
+        #     atlas_nii = "tmp/atlas2post_AAL116_origin_MNI_T1.nii"
+        #     atlas_txt = "tmp/AAL116.txt"
+
+        if atlas == 'DKT':
+            atlas_nii = None
+            atlas_txt = "tmp/dkt_atlas_mappings.txt"
 
         mask_name="{}_predicted_mask.nii.gz".format(patient_id)
 
-        print(mask_name)
-
+        output_dir = "static"
         global graph
 
-        with graph.as_default():
-            gen_mask(
-                os.path.join("static", postop.filename),
-                "static",
-                mask_name,
-                isContinuous,
-                graph
+        # apply an atlas to pre-operative image, register atlas to post-operative image
+        print('pre2post')
+        print("deformable? {}".format(isDeformable))
+        if isDeformable:
+            pre2post_deformable(
+                patient_id,
+                os.path.join(output_dir, preop.filename),
+                os.path.join(output_dir, postop.filename),
+                output_dir,
+                os.path.join(output_dir, mask.filename)
             )
 
+        else:
+            pre2post(
+                patient_id,
+                os.path.join(output_dir, preop.filename),
+                os.path.join(output_dir, postop.filename),
+                output_dir
+            )
+
+        pre2post_fname = "pre2post_{}".format(preop.filename)
+
+        print("register_atlas_to_preop")
+        registered_atlas_fname = register_atlas_to_preop(
+            patient_id,
+            os.path.join(output_dir, pre2post_fname),
+            output_dir
+        )
+
+        print("gen_mask")
+        with graph.as_default():
+            gen_mask(
+                os.path.join(output_dir, postop.filename),
+                output_dir,
+                mask_name,
+                isContinuous
+            )
+
+        print("calc_resec_volume")
         df, imgs = calc_resec_vol(
-            os.path.join("static", postop.filename),
-            os.path.join("static", mask_name),
-            atlas_nii,
+            os.path.join(output_dir, postop.filename),
+            os.path.join(output_dir, mask_name),
+            os.path.join(output_dir, registered_atlas_fname),
             atlas_txt,
-            os.path.join("static", ""),
+            output_dir,
         )
 
 
@@ -215,4 +263,4 @@ def about():
     return render_template('about.html')
 
 if __name__ == '__main__':
-    app.run(debug=False, threaded=False)
+    app.run(debug=True, threaded=False)

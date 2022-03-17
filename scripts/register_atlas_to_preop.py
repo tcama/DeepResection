@@ -14,10 +14,16 @@ import os
 import sys
 import antspynet
 
-pat_id = sys.argv[1]
-PRE2POST = sys.argv[2]
-OUT_DIR = sys.argv[3]
 
-preop = ants.image_read(PRE2POST)
-DKT = antspynet.utilities.desikan_killiany_tourville_labeling(preop, do_preprocessing=True, return_probability_images=False, do_lobar_parcellation=False, antsxnet_cache_directory=None, verbose=False)
-ants.image_write(DKT, os.path.join(OUT_DIR, f'{pat_id}_DKT_DL.nii.gz'))
+def register_atlas_to_preop(pat_id, PRE2POST, OUT_DIR):
+    preop = ants.image_read(PRE2POST)
+    DKT = antspynet.utilities.desikan_killiany_tourville_labeling(preop, do_preprocessing=True, return_probability_images=False, do_lobar_parcellation=False, antsxnet_cache_directory=None, verbose=False)
+
+    registered_atlas_fname = f'{pat_id}_DKT_DL.nii.gz'
+    ants.image_write(DKT, os.path.join(OUT_DIR, registered_atlas_fname))
+
+    return registered_atlas_fname
+if __name__ == "__main__":
+    pat_id = sys.argv[1]
+    PRE2POST = sys.argv[2]
+    OUT_DIR = sys.argv[3]

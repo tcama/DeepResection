@@ -4,16 +4,42 @@
     <h1>{% block title %} Resection Mask {% endblock %}</h1>
     <form method="POST" action="{{ url_for('mask') }}" enctype="multipart/form-data">
       <p>Check if entire resection continuous:<br><input type="checkbox" name="continuous" value="Yes"></p>
+      <p>Pre-operative image<br><input type="file" name="file" required></p>
       <p>Post-operative image<br><input type="file" name="file" required></p>
       <p>Patient ID<br><input type="text" name="id" required></p>
+      
       <p>
-        <label for="atlas">Atlas</label>
+        <label for="atlas">Atlas:</label>
         <select id="atlas" name="atlas"> 
-          <option value="AAL">AAL</option>
+          <option value="DKT">DKT</option>
         </select>
       </p>
-      <p><input type="submit" value="Submit"></p>
-  </form>
 
+      <p>
+        <label for="atlas">Registration Type:</label>
+        <a class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active" id="rigidlabel">
+            <input type="radio" name="rigid" id="rigid" checked"> Rigid
+          </label>
+          <label class="btn btn-secondary" id="deformablelabel">
+            <input type="radio" name="deformable" id="deformable"> Deformable
+          </label>  
+        </a>
+      </p>
+
+      <p>Mask<br><input type="file" name="file" id="maskfile" disabled></p>
+      
+      <p><input type="submit" value="Submit"></p>
+
+      <script>
+        $('#rigidlabel').click(function(){
+          $('#maskfile').prop('disabled',true);
+        });
+        $('#deformablelabel').click(function(){
+          $('#maskfile').prop('disabled',false);
+        });
+
+      </script>
+  </form>
 
 {% endblock %}

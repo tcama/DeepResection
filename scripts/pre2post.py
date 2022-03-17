@@ -10,22 +10,28 @@ import ants
 import sys
 import os
 
-sub_id = sys.argv[1]
-preop = sys.argv[2]
-postop = sys.argv[3]
-output_dir = sys.argv[4]
-preop_onlyfile = os.path.basename(preop)
-output_filename = os.path.join(output_dir, f'pre2post_{preop_onlyfile}')
+def pre2post(sub_id, preop, postop, output_dir):
+    preop_onlyfile = os.path.basename(preop)
+    output_filename = os.path.join(output_dir, f'pre2post_{preop_onlyfile}')
 
-# read in images
-fixed = ants.image_read(postop)
-moving = ants.image_read(preop)
+    # read in images
+    fixed = ants.image_read(postop)
+    moving = ants.image_read(preop)
 
-# register preop to postop, with the resection zone masked
-mytx = ants.registration(fixed=fixed , moving=moving , type_of_transform = 'Affine' )
+    # register preop to postop, with the resection zone masked
+    mytx = ants.registration(fixed=fixed , moving=moving , type_of_transform = 'Affine' )
 
-# transform preop to postoperative space
-mywarped_image = ants.apply_transforms( fixed=fixed, moving=moving, interpolator='linear', transformlist=mytx['fwdtransforms'] )
+    # transform preop to postoperative space
+    mywarped_image = ants.apply_transforms( fixed=fixed, moving=moving, interpolator='linear', transformlist=mytx['fwdtransforms'] )
 
-# write out transformed image
-ants.image_write(mywarped_image, output_filename)
+    # write out transformed image
+    ants.image_write(mywarped_image, output_filename)
+
+if __name__ == "__main__":
+    # define arguments and load data
+    sub_id = sys.argv[1]
+    preop = sys.argv[2]
+    postop = sys.argv[3]
+    output_dir = sys.argv[4]
+
+    pre2post(sub_id, preop, postop, output_dir)

@@ -1,4 +1,4 @@
-numpy==1.17
+numpy==1.19.2
 keras==2.6.0
 imageio==2.8.0
 matplotlib==3.2.2
@@ -10,9 +10,9 @@ radiomics==0.1
 scikit_learn==0.23.1
 scikit-image
 tensorflow==2.6.2
+tensorflow-probability==0.14.1
 flask==1.1.2
 segmentation_models==1.0.1
-h5py==2.10.0
 scipy==1.4.1
 jinja2
 pdfkit==0.6.1

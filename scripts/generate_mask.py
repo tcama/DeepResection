@@ -107,7 +107,7 @@ def gen_mask(POSTOP_FILE, OUTPUT_DIR, MASK_NAME, IS_CONTINUOUS):
 
 
         model = Model(inp, out, name = base_model.name)
-        model.load_weights('model/model.h5')
+        model.load_weights('../model/model_efficientnet1_FINAL_fold1.h5')
 
         # predict the resected tissue for each slice in the 3D input array
         preds = model.predict(input_arr, verbose = 1)
