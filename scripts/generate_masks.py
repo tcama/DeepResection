@@ -81,7 +81,7 @@ def generate_mask(input_arr, postop, dim, dim_name):
 
 
     model = Model(inp, out, name = base_model.name)
-    model.load_weights(f'models_tune/model_{dim_name}.h5')
+    model.load_weights(f'model/model_{dim_name}.h5')
     #model.load_weights(f'models/model_{fold}_{dim_name}.h5')
 
     # predict the resected tissue for each slice in the 3D input array

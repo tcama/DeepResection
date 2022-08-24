@@ -22,7 +22,9 @@ Deep learning code for neurosurgery resection zone segmentation on T1 MRI, imple
 
 ## Getting Started ##
 
-Clone the repo: `git clone https://github.com/penn-cnt/DeepResection.git`
+Clone the repo: `git clone https://github.com/penn-cnt/DeepResection.git`.
+
+Enter the `DeepResection` directory. Make a `model` directory within the repo using the command `mkdir model`. Then, download the 3 model weights at [this link](https://drive.google.com/drive/folders/1tj8T_aHpeM-4XuQys-CSy3brskkGMf2F?usp=sharing) and save them in the `model` directory as `model/model_axial.h5`, `model/model_coronal.h5`, and `model/model_sagittal.h5`.
 
 ## Running the Pipeline ##
 
