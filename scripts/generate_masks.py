@@ -11,18 +11,13 @@ import numpy as np
 import nibabel as nib
 import imageio
 import os
-import shutil
 import tensorflow as tf
 import cv2
-from keras.models import Model, load_model
+from keras.models import Model
 from keras.layers import Input, Conv2D
-from keras.optimizers import Adam
 from keras.utils.generic_utils import get_custom_objects
 import warnings
 from skimage.measure import label
-from radiomics.shape import RadiomicsShape
-from radiomics.featureextractor import RadiomicsFeatureExtractor
-from sklearn.cluster import KMeans
 import segmentation_models as sm
 warnings.filterwarnings("ignore")
 
@@ -74,7 +69,7 @@ def generate_postop(postop, dim):
 def generate_mask(input_arr, postop, dim, dim_name):
     BACKBONE = 'efficientnetb1'
 
-    base_model = sm.Unet(BACKBONE, encoder_weights='imagenet', classes=1, activation='sigmoid')
+    base_model = sm.Unet(BACKBONE, encoder_weights=None, classes=1, activation='sigmoid')
     inp = Input(shape=(256, 256, 1))
     l1 = Conv2D(3, (1, 1)) (inp)
     out = base_model(l1)

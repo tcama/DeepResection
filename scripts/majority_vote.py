@@ -16,7 +16,6 @@ AXIAL_MASK_FILE = sys.argv[2]
 CORONAL_MASK_FILE = sys.argv[3]
 SAGITTAL_MASK_FILE = sys.argv[4]
 OUTPUT_DIR = sys.argv[5]
-IS_CONTINUOUS = sys.argv[6]
 
 try:
     postop = nib.load(POSTOP_FILE)

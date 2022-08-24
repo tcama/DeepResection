@@ -28,6 +28,8 @@ Enter the `DeepResection` directory. Make a `model` directory within the repo us
 
 ## Running the Pipeline ##
 
+First, please ensure that all input images are in LAS orientation, otherwise resection predictions are likely to be inaccurate.
+
 Run segmentation only:
 
 `./pipeline/resection_segmentation_only_pipeline.sh patient_name postop_mri.nii output_dir`
